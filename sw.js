@@ -1,4 +1,4 @@
-const CACHE_NAME = 'two-city-memories-v2-stage2';
+const CACHE_NAME = 'two-city-memories-v2-stage2-r2';
 
 const CORE_ASSETS = [
   './',

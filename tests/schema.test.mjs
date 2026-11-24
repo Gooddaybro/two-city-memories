@@ -32,13 +32,15 @@ test('createDefaultState contains accurate couple info, 2026-08-08 start date, 0
   assert.equal(state.wishes[0].pinned, true);
   assert.equal(state.tickets[0].date, '2026.08.08 – 08.09');
   assert.equal(state.photos.length, 7);
-  assert.equal(state.photos[0].path, './images/01_jinan_baotuquan.webp');
+  assert.equal(state.photos[0].city, '枣庄');
+  assert.equal(state.photos[0].date, '2026.08.08');
+  assert.equal(state.photos[0].path, './images/01_zaozhuang_twin_towers.webp');
   assert.equal(state.milestones.length >= 4, true);
   assert.equal(state.letters.beijing.authorName, '许金阳');
   assert.equal(state.letters.lyg.authorName, '渐姝君');
 });
 
-test('normalizeState upgrades legacy placeholder-only photos to real gallery photos', () => {
+test('normalizeState upgrades legacy placeholder-only photos and corrects Zaozhuang twin towers photo', () => {
   const upgraded = normalizeState({
     photos: [
       { id: 'p1', city: '枣庄', title: '旧占位', path: './images/01_zaozhuang_0808.webp' },
@@ -46,7 +48,16 @@ test('normalizeState upgrades legacy placeholder-only photos to real gallery pho
     ]
   });
   assert.equal(upgraded.photos.length, 7);
-  assert.equal(upgraded.photos[0].path, './images/01_jinan_baotuquan.webp');
+  assert.equal(upgraded.photos[0].path, './images/01_zaozhuang_twin_towers.webp');
+
+  const fixed = normalizeState({
+    photos: [
+      { id: 'p6', city: '徐州', title: '夜色长桥 · 彭城', path: './images/06_xuzhou_night_bridge.webp' }
+    ]
+  });
+  assert.equal(fixed.photos[0].city, '枣庄');
+  assert.equal(fixed.photos[0].date, '2026.08.08');
+  assert.equal(fixed.photos[0].path, './images/01_zaozhuang_twin_towers.webp');
 });
 
 test('createDefaultState returns deep clones so mutations do not leak across calls', () => {

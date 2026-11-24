@@ -160,6 +160,17 @@ export const DEFAULT_STATE = {
   ],
   photos: [
     {
+      id: 'p0',
+      city: '枣庄',
+      date: '2026.08.08',
+      title: '双子塔夜色 · 枣庄',
+      path: './images/01_zaozhuang_twin_towers.webp',
+      caption: '2026.08.08 · 第一次在枣庄约会，双子塔灯火与桥栏上并肩的两个影子',
+      tags: ['枣庄', '初遇', '夜景'],
+      gradient: 'linear-gradient(135deg, #371a00, #1a0c00)',
+      presetMeta: '35mm · f/2.0 · ISO 800 · Zaozhuang'
+    },
+    {
       id: 'p1',
       city: '济南',
       date: '2026.09',
@@ -213,17 +224,6 @@ export const DEFAULT_STATE = {
       tags: ['连云港', '细节', '浪漫'],
       gradient: 'linear-gradient(135deg, #27221f, #141210)',
       presetMeta: '35mm · f/2.2 · ISO 200 · Lianyungang'
-    },
-    {
-      id: 'p6',
-      city: '徐州',
-      date: '2026.11.01',
-      title: '夜色长桥 · 彭城',
-      path: './images/06_xuzhou_night_bridge.webp',
-      caption: '2026.11.01 · 晚秋灯火与桥栏上并肩同行的两个影子',
-      tags: ['徐州', '夜景', '剪影'],
-      gradient: 'linear-gradient(135deg, #371a00, #1a0c00)',
-      presetMeta: '35mm · f/2.0 · ISO 800 · Xuzhou'
     },
     {
       id: 'p7',

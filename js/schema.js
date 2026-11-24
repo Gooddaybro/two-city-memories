@@ -218,7 +218,13 @@ export function normalizeState(input) {
   ]);
 
   const rawPhotos = Array.isArray(input.photos)
-    ? input.photos.map(normalizePhoto)
+    ? input.photos.map((item, idx) => {
+        const normalized = normalizePhoto(item, idx);
+        if (normalized.path === './images/06_xuzhou_night_bridge.webp') {
+          return deepClone(DEFAULT_STATE.photos[0]);
+        }
+        return normalized;
+      })
     : defaults.photos;
 
   const isOnlyLegacyPlaceholders =
