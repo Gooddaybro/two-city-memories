@@ -7,11 +7,15 @@ import {
   initMobileBottomNav
 } from './modules/ui.js';
 import { initCountersModule } from './modules/counters.js';
+import { initWeatherModule } from './modules/weather.js';
+import { initMapModule } from './modules/map.js';
 import { initCoupleModule } from './modules/couple.js';
 import { initTicketsModule } from './modules/tickets.js';
 import { initGalleryModule } from './modules/gallery.js';
 import { initWishlistModule } from './modules/wishlist.js';
 import { initLettersModule } from './modules/letters.js';
+import { initVinylModule } from './modules/vinyl.js';
+import { initScrollReveal } from './modules/effects.js';
 
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
@@ -53,11 +57,17 @@ function bootstrap() {
   initBackupControls(store);
   initStarfieldCanvas();
   initMobileBottomNav();
+  initScrollReveal();
+  initVinylModule();
 
   const counters = initCountersModule(store);
+  initWeatherModule(store);
   const couple = initCoupleModule(store);
   const tickets = initTicketsModule(store);
   const gallery = initGalleryModule(store);
+  const mapCtrl = initMapModule(store, {
+    onOpenPhoto: (photo) => gallery.openLightbox(photo)
+  });
   const wishlist = initWishlistModule(store);
   const letters = initLettersModule(store);
 
@@ -68,6 +78,7 @@ function bootstrap() {
     lockCtrl.syncLockPrefs(nextState);
     counters.render();
     couple.render();
+    mapCtrl.render();
     tickets.render();
     gallery.render();
     wishlist.render();

@@ -86,13 +86,14 @@
       </a>
 
       <!-- Desktop Navigation Links -->
-      <nav class="hidden md:flex items-center space-x-6 text-xs font-mono text-[var(--text-secondary)]">
+      <nav class="hidden md:flex items-center space-x-5 text-xs font-mono text-[var(--text-secondary)]">
         <a href="#hero" class="hover:text-[var(--accent-gold)] transition">01. 首页</a>
-        <a href="#about" class="hover:text-[var(--accent-gold)] transition">02. 关于我们</a>
-        <a href="#footprints" class="hover:text-[var(--accent-gold)] transition">03. 车票足迹</a>
-        <a href="#gallery" class="hover:text-[var(--accent-gold)] transition">04. 胶片影集</a>
-        <a href="#checklist" class="hover:text-[var(--accent-gold)] transition">05. 研途清单</a>
-        <a href="#letters" class="hover:text-[var(--accent-gold)] transition">06. 双城来信</a>
+        <a href="#route-map" class="hover:text-[var(--accent-gold)] transition">02. 双城版图</a>
+        <a href="#about" class="hover:text-[var(--accent-gold)] transition">03. 我们</a>
+        <a href="#footprints" class="hover:text-[var(--accent-gold)] transition">04. 车票</a>
+        <a href="#gallery" class="hover:text-[var(--accent-gold)] transition">05. 影集</a>
+        <a href="#checklist" class="hover:text-[var(--accent-gold)] transition">06. 心愿</a>
+        <a href="#letters" class="hover:text-[var(--accent-gold)] transition">07. 来信</a>
       </nav>
 
       <!-- Utility Actions -->
@@ -115,8 +116,34 @@
     <!-- SECTION 01: HERO -->
     <section id="hero" class="relative min-h-[86vh] flex flex-col justify-center items-center px-4 py-14 sm:py-16 text-center overflow-hidden">
 
-      <!-- Radial ambient backglow -->
-      <div class="absolute w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full blur-[120px] pointer-events-none opacity-20 -z-10" style="background: var(--accent-gold);"></div>
+      <!-- Radial ambient backglow (synced to time-of-day sky mood) -->
+      <div id="heroAmbientGlow" class="absolute w-[320px] h-[320px] sm:w-[540px] sm:h-[540px] rounded-full blur-[110px] pointer-events-none opacity-80 -z-10 transition-all duration-700" style="background: radial-gradient(circle, rgba(229, 193, 133, 0.24) 0%, transparent 72%);"></div>
+
+      <!-- DUAL-CITY LIVE WEATHER & SKY STATUS BAR -->
+      <div class="w-full max-w-2xl mx-auto mb-7 glass-card rounded-2xl px-4 py-3 text-left space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="text-[var(--text-muted)]">北京</span>
+            <span id="weatherBjTemp" class="font-bold text-[var(--text-primary)]">--°C</span>
+            <span id="weatherBjDesc" class="text-[11px] text-[var(--text-secondary)]">加载中...</span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <span id="weatherDiffBadge" class="px-2 py-0.5 rounded-full text-[10px] border border-[var(--border-color)] text-[var(--accent-gold)] bg-white/5">同屏中</span>
+            <span id="skyMoodBadge" class="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] border border-[var(--border-subtle)] text-[var(--text-muted)]">暗夜星轨</span>
+            <button id="refreshWeatherBtn" title="刷新双城天气" aria-label="刷新双城天气" class="p-1 text-[var(--text-muted)] hover:text-[var(--accent-gold)] transition">↻</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[var(--text-muted)]">连云港</span>
+            <span id="weatherLygTemp" class="font-bold text-[var(--text-primary)]">--°C</span>
+            <span id="weatherLygDesc" class="text-[11px] text-[var(--text-secondary)]">加载中...</span>
+          </div>
+        </div>
+        <p id="weatherTipText" class="text-[11px] text-[var(--text-secondary)] font-sans border-t border-[var(--border-subtle)] pt-2 leading-relaxed">
+          正在同步北京与连云港此刻的实时天气与天色...
+        </p>
+      </div>
 
       <!-- Geographic Coordinates & Route Banner -->
       <div class="w-full max-w-2xl mx-auto mb-9 space-y-4">
@@ -198,8 +225,94 @@
 
     </section>
 
-    <!-- SECTION 02: ABOUT US & MILESTONES -->
-    <section id="about" class="max-w-5xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)] space-y-12">
+    <!-- SECTION 02: DYNAMIC DUAL-CITY SVG ROUTE MAP, MILEAGE STATS & DATE PICKER -->
+    <section id="route-map" class="reveal-section max-w-6xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)] space-y-10">
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Interactive Route Atlas</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城轨迹版图 · 一起点亮地图</h2>
+        </div>
+        <p class="text-xs font-mono text-[var(--text-muted)]">点击地图上的城市光点，查看车票与精选照片</p>
+      </div>
+
+      <!-- Map + City Detail Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div class="lg:col-span-7 glass-card rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+          <div id="routeMapSvgContainer" class="w-full">
+            <!-- Rendered by map.js -->
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-3 mt-2 border-t border-[var(--border-subtle)] text-[10px] font-mono text-[var(--text-muted)]">
+            <div class="flex items-center gap-4">
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[var(--accent-gold)]"></span> 已点亮城市</span>
+              <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-dashed border-[var(--text-muted)]"></span> 筹备下一站</span>
+            </div>
+            <span>BJ 39.90°N ⇄ LYG 34.60°N</span>
+          </div>
+        </div>
+
+        <div id="mapCityDetailCard" class="lg:col-span-5 glass-card rounded-3xl p-5 sm:p-7 flex flex-col justify-between">
+          <!-- Rendered by map.js -->
+        </div>
+      </div>
+
+      <!-- Mileage Count-Up Panel + Date Idea Scratch Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div id="mileageStatsGrid" class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+            <span class="text-[10px] font-mono text-[var(--text-muted)] uppercase">累计跨越</span>
+            <div id="statTotalKm" class="font-mono text-xl sm:text-2xl font-bold text-[var(--accent-gold)] mt-2">0 km</div>
+            <span class="text-[10px] text-[var(--text-secondary)] mt-1">已检票高铁里程</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+            <span class="text-[10px] font-mono text-[var(--text-muted)] uppercase">攒下票根</span>
+            <div id="statCheckedTickets" class="font-mono text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">0 趟</div>
+            <span class="text-[10px] text-[var(--text-secondary)] mt-1">奔赴彼此的专列</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+            <span class="text-[10px] font-mono text-[var(--text-muted)] uppercase">点亮城市</span>
+            <div id="statLitCities" class="font-mono text-xl sm:text-2xl font-bold text-[var(--text-primary)] mt-2">0 座</div>
+            <span class="text-[10px] text-[var(--text-secondary)] mt-1">双城与中转足迹</span>
+          </div>
+          <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+            <span class="text-[10px] font-mono text-[var(--text-muted)] uppercase">心愿达成</span>
+            <div id="statWishPct" class="font-mono text-xl sm:text-2xl font-bold text-[var(--accent-gold)] mt-2">0%</div>
+            <span class="text-[10px] text-[var(--text-secondary)] mt-1">研途清单完成率</span>
+          </div>
+        </div>
+
+        <!-- Date Idea Scratch / Draw Card -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-5 flex flex-col justify-between space-y-3 relative overflow-hidden">
+          <div class="flex items-center justify-between text-[10px] font-mono">
+            <span class="text-[var(--accent-gold)] uppercase tracking-wider">✨ 下次约会灵感刮刮乐</span>
+            <span id="dateIdeaCategory" class="px-2 py-0.5 rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)]">灵感</span>
+          </div>
+
+          <div class="relative rounded-xl p-3.5 bg-white/5 border border-[var(--border-subtle)] min-h-[82px] flex flex-col justify-center">
+            <div id="dateIdeaTitle" class="font-serif text-sm sm:text-base font-bold text-[var(--text-primary)]"></div>
+            <p id="dateIdeaNote" class="text-[11px] text-[var(--text-secondary)] mt-1 leading-relaxed"></p>
+
+            <button id="dateIdeaCover" type="button" class="scratch-cover absolute inset-0 rounded-xl flex flex-col items-center justify-center gap-1 font-serif font-bold text-sm cursor-pointer">
+              <span>✨ 轻点刮开下一次约会彩蛋</span>
+              <span class="text-[10px] font-mono opacity-80">TAP TO REVEAL</span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-1">
+            <button id="drawDateIdeaBtn" type="button" class="touch-target px-3.5 py-1.5 rounded-xl text-[11px] font-mono border border-[var(--border-color)] text-[var(--accent-gold)] bg-white/5 hover:bg-white/10 transition">
+              🎲 换一个灵感
+            </button>
+            <button id="addDateIdeaToWishBtn" type="button" class="touch-target px-3.5 py-1.5 rounded-xl text-[11px] font-mono border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition">
+              + 加入心愿清单
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION 03: ABOUT US & MILESTONES -->
+    <section id="about" class="reveal-section max-w-5xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)] space-y-12">
 
       <!-- Couple Profiles Header -->
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -236,8 +349,8 @@
 
     </section>
 
-    <!-- SECTION 03: HIGH-SPEED RAIL BOARDING PASS TIMELINE -->
-    <section id="footprints" class="max-w-5xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+    <!-- SECTION 04: HIGH-SPEED RAIL BOARDING PASS TIMELINE -->
+    <section id="footprints" class="reveal-section max-w-5xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
 
       <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
         <div>
@@ -258,8 +371,8 @@
 
     </section>
 
-    <!-- SECTION 04: 35MM CINEMA FILM GALLERY -->
-    <section id="gallery" class="max-w-6xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+    <!-- SECTION 05: 35MM CINEMA FILM GALLERY -->
+    <section id="gallery" class="reveal-section max-w-6xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
 
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-5">
         <div>
@@ -285,8 +398,8 @@
 
     </section>
 
-    <!-- SECTION 05: EDITORIAL WISH LIST -->
-    <section id="checklist" class="max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+    <!-- SECTION 06: EDITORIAL WISH LIST -->
+    <section id="checklist" class="reveal-section max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
 
       <div class="text-center max-w-xl mx-auto mb-10">
         <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Graduate Journey Wishlist</span>
@@ -315,8 +428,8 @@
 
     </section>
 
-    <!-- SECTION 06: MIDNIGHT LETTERS -->
-    <section id="letters" class="max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+    <!-- SECTION 07: MIDNIGHT LETTERS -->
+    <section id="letters" class="reveal-section max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
 
       <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
         <div>
@@ -382,6 +495,28 @@
     </div>
   </footer>
 
+  <!-- MINI SPINNING VINYL RECORD PLAYER (Muted by default) -->
+  <div id="vinylWidget" class="fixed bottom-20 md:bottom-6 right-4 z-[60] flex flex-col items-end gap-2">
+    <div id="vinylPanel" class="hidden glass-card rounded-2xl p-4 w-64 space-y-3" style="background: var(--modal-bg);">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <div id="vinylTrackTitle" class="font-serif text-xs font-bold text-[var(--text-primary)] truncate">我爱你 · 暖夜八音盒</div>
+          <div id="vinylTrackArtist" class="text-[10px] font-mono text-[var(--text-muted)] truncate mt-0.5">10.05 彩蛋旋律 · 小狗 & 小猪</div>
+        </div>
+        <button id="vinylClosePanelBtn" aria-label="收起黑胶面板" class="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--text-primary)] px-1">✕</button>
+      </div>
+      <div class="flex items-center justify-between gap-2">
+        <button id="vinylPlayBtn" class="flex-1 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold transition">▶ 播放</button>
+        <button id="vinylNextBtn" class="px-3 py-2 rounded-xl text-xs font-mono border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--accent-gold)] transition">切歌 ⏭</button>
+      </div>
+    </div>
+    <button id="vinylToggleBtn" title="双城迷你黑胶电台（默认静音）" aria-label="双城迷你黑胶电台" class="w-12 h-12 rounded-full flex items-center justify-center transition hover:scale-105 focus:outline-none">
+      <span id="vinylDisc" class="vinyl-disc w-12 h-12 rounded-full flex items-center justify-center">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#0A0D14] border border-amber-200/70"></span>
+      </span>
+    </button>
+  </div>
+
   <!-- MOBILE BOTTOM NAVIGATION BAR -->
   <nav aria-label="移动端快捷导航" class="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 px-2 pt-2">
     <div class="grid grid-cols-6 gap-1 max-w-lg mx-auto text-center">
@@ -390,9 +525,9 @@
         <span>首页</span>
         <span class="mobile-nav-dot"></span>
       </a>
-      <a href="#about" data-section="about" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
-        <span class="text-sm leading-none">♡</span>
-        <span>我们</span>
+      <a href="#route-map" data-section="route-map" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">🗺</span>
+        <span>版图</span>
         <span class="mobile-nav-dot"></span>
       </a>
       <a href="#footprints" data-section="footprints" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
@@ -536,6 +671,23 @@
           <div>
             <label class="block font-mono text-[var(--text-muted)] mb-1">出行时间</label>
             <input type="text" id="ticketDate" placeholder="例: 2027.01" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2.5">
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">车次</label>
+            <input type="text" id="ticketTrainNo" placeholder="例: G2589" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">里程 (km)</label>
+            <input type="number" id="ticketDistance" placeholder="745" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">票面风格</label>
+            <select id="ticketTheme" class="app-input w-full rounded-xl px-2 py-2">
+              <option value="blue" selected>蓝票</option>
+              <option value="pink">粉票</option>
+            </select>
           </div>
         </div>
         <div>

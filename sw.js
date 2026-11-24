@@ -1,4 +1,4 @@
-const CACHE_NAME = 'two-city-memories-v2-photos';
+const CACHE_NAME = 'two-city-memories-v2-stage2';
 
 const CORE_ASSETS = [
   './',
@@ -13,13 +13,18 @@ const CORE_ASSETS = [
   './js/schema.js',
   './js/store.js',
   './js/app.js',
+  './js/utils/stage2-logic.js',
   './js/modules/ui.js',
   './js/modules/counters.js',
+  './js/modules/weather.js',
+  './js/modules/map.js',
   './js/modules/couple.js',
   './js/modules/tickets.js',
   './js/modules/gallery.js',
   './js/modules/wishlist.js',
-  './js/modules/letters.js'
+  './js/modules/letters.js',
+  './js/modules/vinyl.js',
+  './js/modules/effects.js'
 ];
 
 self.addEventListener('install', (event) => {

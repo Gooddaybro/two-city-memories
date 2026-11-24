@@ -184,5 +184,5 @@ export function initGalleryModule(store) {
 
   render();
 
-  return { render, closeLightbox };
+  return { render, openLightbox, closeLightbox };
 }

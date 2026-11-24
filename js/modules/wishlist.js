@@ -1,4 +1,5 @@
 import { escapeHtml, showToast } from './ui.js';
+import { triggerWishConfetti } from './effects.js';
 
 export function initWishlistModule(store) {
   const container = document.getElementById('wishlistContainer');
@@ -57,10 +58,12 @@ export function initWishlistModule(store) {
     const toggleBtn = e.target.closest('[data-toggle-wish]');
     if (toggleBtn) {
       const id = toggleBtn.getAttribute('data-toggle-wish');
+      let justCompleted = false;
       store.update((draft) => {
         draft.wishes = draft.wishes.map((w) => {
           if (w.id !== id) return w;
           const nextDone = !w.done;
+          if (nextDone) justCompleted = true;
           return {
             ...w,
             done: nextDone,
@@ -68,6 +71,10 @@ export function initWishlistModule(store) {
           };
         });
       });
+      if (justCompleted) {
+        triggerWishConfetti(toggleBtn);
+        showToast('又一起完成了一个双城心愿 ✨', 'success');
+      }
       return;
     }
 
