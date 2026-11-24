@@ -3,12 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>北京 ↔ 连云港 | 双城约会纪念册</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>许金阳 ⇄ 渐姝君 | 北京 ↔ 连云港 双城约会纪念册</title>
+  <meta name="description" content="许金阳（北京·小狗）与渐姝君（连云港·小猪）的双城约会纪念册，自 2026.08.08 起记录每一段山海奔赴。">
+  <meta name="theme-color" content="#0A0D14">
+
+  <!-- Open Graph / WeChat Link Metadata -->
+  <meta property="og:title" content="许金阳 ⇄ 渐姝君 | 双城约会纪念册">
+  <meta property="og:description" content="北京 ↔ 连云港 · 小狗与小猪的山海奔赴，自 2026.08.08 起。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./assets/icons/icon-512.png">
+
+  <!-- PWA & Mobile App Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="双城纪念册">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,133 +43,10 @@
           }
         }
       }
-    }
+    };
   </script>
 
-  <style>
-    /* Global CSS Custom Variables for Theme Switcher */
-    :root {
-      /* Theme 1: Default Midnight Film (暗夜星轨 · 午夜胶片) */
-      --bg-main: #0A0D14;
-      --bg-card: rgba(18, 23, 34, 0.82);
-      --bg-card-hover: rgba(26, 33, 48, 0.9);
-      --border-color: rgba(229, 193, 133, 0.22);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --accent-gold: #E5C185;
-      --accent-glow: rgba(229, 193, 133, 0.25);
-      --text-primary: #F4F0E6;
-      --text-secondary: #8A94A6;
-      --text-muted: #566173;
-      --ticket-bg: #111622;
-      --nav-bg: rgba(10, 13, 20, 0.85);
-      --modal-bg: rgba(14, 18, 27, 0.95);
-      --shadow-color: rgba(0, 0, 0, 0.5);
-    }
-
-    [data-theme="light"] {
-      /* Theme 2: Coastal Editorial Light (海风画报 · 极简白昼) */
-      --bg-main: #F6F8FA;
-      --bg-card: rgba(255, 255, 255, 0.88);
-      --bg-card-hover: rgba(255, 255, 255, 1);
-      --border-color: rgba(58, 107, 159, 0.28);
-      --border-subtle: rgba(220, 227, 236, 0.85);
-      --accent-gold: #162A45;
-      --accent-glow: rgba(58, 107, 159, 0.18);
-      --text-primary: #162A45;
-      --text-secondary: #4A586E;
-      --text-muted: #8A98AC;
-      --ticket-bg: #FFFFFF;
-      --nav-bg: rgba(246, 248, 250, 0.85);
-      --modal-bg: rgba(255, 255, 255, 0.98);
-      --shadow-color: rgba(22, 42, 69, 0.08);
-    }
-
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-primary);
-      transition: background-color 0.4s ease, color 0.4s ease;
-      font-family: 'Noto Sans SC', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* Film noise grain overlay */
-    .film-grain {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      pointer-events: none;
-      z-index: 999;
-      opacity: 0.035;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    }
-
-    /* Glassmorphism utility */
-    .glass-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 20px 40px -15px var(--shadow-color);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .glass-card:hover {
-      border-color: var(--border-color);
-    }
-
-    /* Ticket notch effect */
-    .ticket-card {
-      position: relative;
-      background-color: var(--ticket-bg);
-      border: 1px solid var(--border-subtle);
-      transition: all 0.3s ease;
-    }
-    .ticket-card::before, .ticket-card::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: 20px;
-      height: 20px;
-      background-color: var(--bg-main);
-      border-radius: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      border: 1px solid var(--border-subtle);
-    }
-    .ticket-card::before { left: -11px; }
-    .ticket-card::after { right: -11px; }
-
-    /* Custom SVG Barcode pattern */
-    .barcode-line {
-      background: repeating-linear-gradient(
-        90deg,
-        var(--text-primary),
-        var(--text-primary) 2px,
-        transparent 2px,
-        transparent 4px,
-        var(--text-primary) 4px,
-        var(--text-primary) 7px
-      );
-    }
-
-    /* Train line animation */
-    @keyframes moveDot {
-      0% { left: 0%; opacity: 0.2; }
-      50% { opacity: 1; }
-      100% { left: 100%; opacity: 0.2; }
-    }
-    .animate-train-dot {
-      animation: moveDot 4s ease-in-out infinite;
-    }
-
-    /* Text selection color */
-    ::selection {
-      background: rgba(229, 193, 133, 0.3);
-      color: var(--text-primary);
-    }
-
-    /* Hide scrollbars smoothly */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+  <link rel="stylesheet" href="./assets/css/main.css">
 </head>
 <body data-theme="dark" class="min-h-screen flex flex-col selection:bg-amber-400 selection:text-black">
 
@@ -162,51 +56,53 @@
   <!-- Dynamic Starfield / Ambient Canvas -->
   <canvas id="ambientCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
 
-  <!-- Passcode Lock Screen (Hidden by default; can be toggled on) -->
-  <div id="lockScreen" class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-4 transition-all duration-500">
-    <div class="text-center max-w-xs w-full space-y-6">
-      <div class="inline-flex p-4 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-300 mb-2">
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-24 md:bottom-6 left-1/2 -translate-x-1/2 z-[140] flex flex-col items-center gap-2 pointer-events-none"></div>
+
+  <!-- Passcode Lock Screen (Unlocked by default; opt-in via lock icon or preference toggle) -->
+  <div id="lockScreen" class="fixed inset-0 z-[130] hidden bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-4 transition-all duration-500">
+    <div class="text-center max-w-xs w-full space-y-5">
+      <div class="inline-flex p-4 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-300 mb-1">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
       </div>
-      <h3 class="font-serif text-2xl tracking-widest text-amber-200/90">双城私密空间</h3>
-      <p class="text-xs text-neutral-400 font-mono tracking-wider">输入纪念日解锁 (默认 0807)</p>
-      <input type="password" id="passcodeInput" maxlength="4" placeholder="••••" class="w-full text-center text-3xl font-mono tracking-[0.5em] bg-neutral-900 border border-amber-500/30 rounded-xl py-3 text-amber-300 focus:outline-none focus:border-amber-400 transition">
-      <button onclick="checkPasscode()" class="w-full py-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 font-mono text-sm tracking-widest border border-amber-500/40 transition">进入纪念册</button>
-      <p id="passcodeError" class="text-xs text-rose-400 hidden">密码错误，请重试</p>
+      <div>
+        <h3 class="font-serif text-2xl tracking-widest text-amber-200/95">小狗 & 小猪的私密空间</h3>
+        <p id="lockPasscodeHint" class="text-xs text-neutral-400 font-mono tracking-wider mt-2">输入纪念日解锁 (默认 0808)</p>
+      </div>
+      <input type="password" inputmode="numeric" id="passcodeInput" maxlength="8" placeholder="••••" class="w-full text-center text-3xl font-mono tracking-[0.5em] bg-neutral-900 border border-amber-500/30 rounded-xl py-3 text-amber-300 focus:outline-none focus:border-amber-400 transition">
+      <button id="passcodeSubmitBtn" class="w-full py-3.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 font-mono text-sm tracking-widest border border-amber-500/40 transition">进入纪念册</button>
+      <p id="passcodeError" class="text-xs text-rose-400 hidden">密码错误，提示：2026.08.08</p>
     </div>
   </div>
 
   <!-- FLOATING TOP NAVIGATION BAR -->
   <header class="fixed top-0 left-0 right-0 z-50 px-4 py-3 border-b border-white/5 backdrop-blur-md transition-colors duration-300" style="background: var(--nav-bg);">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+
       <!-- Brand Logo -->
-      <a href="#" class="flex items-center space-x-2 group">
-        <span class="font-serif font-bold text-lg tracking-widest text-[var(--text-primary)] group-hover:opacity-80 transition">BJ</span>
-        <span class="text-xs font-mono text-[var(--accent-gold)]">⇄</span>
-        <span class="font-serif font-bold text-lg tracking-widest text-[var(--text-primary)] group-hover:opacity-80 transition">LYG</span>
-        <span class="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full border border-white/10 text-[var(--text-secondary)] ml-2">双城记</span>
+      <a href="#hero" class="flex items-center gap-2 group min-w-0">
+        <span id="navCoupleTitle" class="font-serif font-bold text-base sm:text-lg tracking-wider text-[var(--text-primary)] group-hover:opacity-80 transition truncate">许金阳 ⇄ 渐姝君</span>
+        <span id="navCoupleSub" class="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 rounded-full border border-[var(--border-subtle)] text-[var(--accent-gold)] shrink-0">小狗 & 小猪</span>
       </a>
 
-      <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center space-x-8 text-xs font-mono text-[var(--text-secondary)]">
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center space-x-6 text-xs font-mono text-[var(--text-secondary)]">
         <a href="#hero" class="hover:text-[var(--accent-gold)] transition">01. 首页</a>
-        <a href="#footprints" class="hover:text-[var(--accent-gold)] transition">02. 车票足迹</a>
-        <a href="#gallery" class="hover:text-[var(--accent-gold)] transition">03. 胶片影集</a>
-        <a href="#checklist" class="hover:text-[var(--accent-gold)] transition">04. 研途清单</a>
-        <a href="#letters" class="hover:text-[var(--accent-gold)] transition">05. 双城来信</a>
+        <a href="#about" class="hover:text-[var(--accent-gold)] transition">02. 关于我们</a>
+        <a href="#footprints" class="hover:text-[var(--accent-gold)] transition">03. 车票足迹</a>
+        <a href="#gallery" class="hover:text-[var(--accent-gold)] transition">04. 胶片影集</a>
+        <a href="#checklist" class="hover:text-[var(--accent-gold)] transition">05. 研途清单</a>
+        <a href="#letters" class="hover:text-[var(--accent-gold)] transition">06. 双城来信</a>
       </nav>
 
       <!-- Utility Actions -->
-      <div class="flex items-center space-x-3">
-        <!-- 1-Click Theme Switcher -->
-        <button onclick="toggleTheme()" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] transition bg-white/5 text-[var(--text-primary)]">
+      <div class="flex items-center space-x-2 shrink-0">
+        <button id="themeToggleBtn" class="touch-target flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] transition bg-white/5 text-[var(--text-primary)]">
           <span id="themeIcon">🌙</span>
-          <span id="themeLabel" class="hidden xs:inline">暗夜星轨</span>
+          <span id="themeLabel" class="hidden sm:inline">暗夜星轨</span>
         </button>
 
-        <!-- Lock Button -->
-        <button onclick="enableLockScreen()" title="锁定空间" class="p-2 rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--accent-gold)] transition">
+        <button id="lockScreenBtn" title="锁定空间" aria-label="锁定空间" class="touch-target flex items-center justify-center p-2 rounded-full border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--accent-gold)] transition">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </button>
       </div>
@@ -216,58 +112,58 @@
 
   <main class="flex-grow pt-16 z-10">
 
-    <!-- HERO SECTION -->
-    <section id="hero" class="relative min-h-[90vh] flex flex-col justify-center items-center px-4 py-16 text-center overflow-hidden">
-      
+    <!-- SECTION 01: HERO -->
+    <section id="hero" class="relative min-h-[86vh] flex flex-col justify-center items-center px-4 py-14 sm:py-16 text-center overflow-hidden">
+
       <!-- Radial ambient backglow -->
-      <div class="absolute w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-full blur-[120px] pointer-events-none opacity-20 -z-10" style="background: var(--accent-gold);"></div>
+      <div class="absolute w-[280px] h-[280px] sm:w-[500px] sm:h-[500px] rounded-full blur-[120px] pointer-events-none opacity-20 -z-10" style="background: var(--accent-gold);"></div>
 
       <!-- Geographic Coordinates & Route Banner -->
-      <div class="w-full max-w-2xl mx-auto mb-10 space-y-4">
-        
-        <div class="flex items-center justify-between text-[11px] sm:text-xs font-mono tracking-widest text-[var(--text-secondary)] border-b border-[var(--border-subtle)] pb-2 px-2">
+      <div class="w-full max-w-2xl mx-auto mb-9 space-y-4">
+
+        <div class="flex items-center justify-between text-[11px] sm:text-xs font-mono tracking-wider text-[var(--text-secondary)] border-b border-[var(--border-subtle)] pb-2 px-1">
           <span>39.90° N · 北京</span>
-          <span class="hidden xs:inline text-[var(--accent-gold)] font-serif italic">G-Train High Speed Connection</span>
+          <span class="hidden sm:inline text-[var(--accent-gold)] font-serif italic">BJ ⇄ LYG · High Speed Connection</span>
           <span>34.60° N · 连云港</span>
         </div>
 
         <!-- Animated Route Line -->
-        <div class="relative w-full h-1 bg-[var(--border-subtle)] rounded-full overflow-hidden my-6">
+        <div class="relative w-full h-1 bg-[var(--border-subtle)] rounded-full overflow-hidden my-5">
           <div class="absolute top-0 bottom-0 w-24 bg-gradient-to-r from-transparent via-[var(--accent-gold)] to-transparent animate-train-dot"></div>
         </div>
 
-        <div class="flex items-center justify-between text-xs text-[var(--text-muted)] font-sans px-2">
+        <div class="flex items-center justify-between text-xs text-[var(--text-muted)] font-sans px-1 gap-2">
           <div class="text-left">
-            <span class="block text-sm font-medium text-[var(--text-primary)]">北京</span>
-            <span class="text-[11px]">在读研究生 · 实验室</span>
+            <span id="heroBjName" class="block text-sm font-medium text-[var(--text-primary)]">北京 · 许金阳（小狗）</span>
+            <span id="heroBjRole" class="text-[11px]">在读研究生 · 实验室</span>
           </div>
-          <div class="text-center">
-            <span class="font-mono text-xs px-2.5 py-1 rounded-full border border-[var(--border-color)] text-[var(--accent-gold)] bg-white/5">距离 740+ KM</span>
+          <div class="text-center shrink-0">
+            <span class="font-mono text-[11px] sm:text-xs px-2.5 py-1 rounded-full border border-[var(--border-color)] text-[var(--accent-gold)] bg-white/5">距离 740+ KM</span>
           </div>
           <div class="text-right">
-            <span class="block text-sm font-medium text-[var(--text-primary)]">连云港</span>
-            <span class="text-[11px]">在读研究生 · 课题组</span>
+            <span id="heroLygName" class="block text-sm font-medium text-[var(--text-primary)]">连云港 · 渐姝君（小猪）</span>
+            <span id="heroLygRole" class="text-[11px]">在读研究生 · 课题组</span>
           </div>
         </div>
 
       </div>
 
       <!-- Editorial Title Header -->
-      <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl tracking-wide leading-tight max-w-3xl mb-6 font-bold text-[var(--text-primary)]">
+      <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl tracking-wide leading-tight max-w-3xl mb-5 font-bold text-[var(--text-primary)]">
         山海有距 <span class="text-[var(--accent-gold)] font-normal italic font-serif">·</span> 奔赴无期
       </h1>
 
-      <p class="max-w-xl text-sm sm:text-base text-[var(--text-secondary)] font-sans leading-relaxed mb-12">
-        从京沪线到徐连线，两台不同的显微镜与文献堆里，<br class="hidden xs:inline">
-        我们把每一次漫长的高铁车程，都酿成相见时的星光。
+      <p class="max-w-xl text-sm sm:text-base text-[var(--text-secondary)] font-sans leading-relaxed mb-10">
+        许金阳与渐姝君的双城记——从京沪线到徐连线，<br class="hidden sm:inline">
+        把每一次漫长的高铁车程，都酿成小狗和小猪相见时的星光。
       </p>
 
       <!-- Live Counters Grid -->
       <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-        
+
         <!-- Live Timer Box -->
-        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-          <div class="text-[10px] font-mono tracking-widest text-[var(--text-muted)] uppercase mb-2">Since 2026.08.07 · 相爱计时</div>
+        <div class="glass-card p-5 sm:p-6 rounded-2xl relative overflow-hidden group">
+          <div id="loveSinceLabel" class="text-[10px] font-mono tracking-widest text-[var(--text-muted)] uppercase mb-2">Since 2026.08.08 · 相爱计时</div>
           <div class="font-mono text-2xl sm:text-3xl font-bold text-[var(--accent-gold)] tracking-tight mb-1" id="loveCounter">
             000<span class="text-xs font-normal text-[var(--text-muted)]">天</span> 00:00:00
           </div>
@@ -276,20 +172,20 @@
         </div>
 
         <!-- Cities Unlocked -->
-        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+        <div class="glass-card p-5 sm:p-6 rounded-2xl relative overflow-hidden group">
           <div class="text-[10px] font-mono tracking-widest text-[var(--text-muted)] uppercase mb-2">Footprints · 解锁城市</div>
-          <div class="font-mono text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight mb-1">
+          <div id="unlockedCityCount" class="font-mono text-2xl sm:text-3xl font-bold text-[var(--text-primary)] tracking-tight mb-1">
             04 <span class="text-xs font-normal text-[var(--text-muted)]">座双城及中转站</span>
           </div>
-          <p class="text-xs text-[var(--text-secondary)]">枣庄 · 济南 · 连云港 · 徐州</p>
+          <p id="unlockedCityList" class="text-xs text-[var(--text-secondary)]">枣庄 · 济南 · 连云港 · 徐州</p>
           <div class="absolute top-3 right-3 text-xs font-mono text-[var(--text-muted)] opacity-30">#02</div>
         </div>
 
         <!-- Next Reunion Box -->
-        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group border-amber-500/30">
+        <div class="glass-card p-5 sm:p-6 rounded-2xl relative overflow-hidden group border-amber-500/30">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[10px] font-mono tracking-widest text-[var(--text-muted)] uppercase">Next Meetup · 下一次倒计时</span>
-            <button onclick="openNextMeetModal()" class="text-[10px] font-mono text-[var(--accent-gold)] underline opacity-80 hover:opacity-100">设置</button>
+            <button id="openNextMeetBtn" class="text-[11px] font-mono text-[var(--accent-gold)] underline opacity-90 hover:opacity-100 px-1 py-0.5">设置</button>
           </div>
           <div class="font-mono text-2xl sm:text-3xl font-bold text-[var(--accent-gold)] tracking-tight mb-1" id="nextMeetCounter">
             --<span class="text-xs font-normal text-[var(--text-muted)]">天</span>
@@ -302,129 +198,154 @@
 
     </section>
 
-    <!-- SECTION 02: HIGH-SPEED RAIL BOARDING PASS TIMELINE -->
-    <section id="footprints" class="max-w-5xl mx-auto px-4 py-20 border-t border-[var(--border-subtle)]">
-      
-      <!-- Section Header -->
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 space-y-4 sm:space-y-0">
+    <!-- SECTION 02: ABOUT US & MILESTONES -->
+    <section id="about" class="max-w-5xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)] space-y-12">
+
+      <!-- Couple Profiles Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// About Us · Protagonists</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">关于我们 · 小狗与小猪</h2>
+        </div>
+        <button id="openEditProfileBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-white/5 hover:bg-white/10 text-[var(--accent-gold)] transition self-start sm:self-auto">
+          ✏️ 编辑双人档案
+        </button>
+      </div>
+
+      <!-- Dual Profile Cards -->
+      <div id="coupleProfilesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Rendered by couple.js -->
+      </div>
+
+      <!-- Milestones Timeline -->
+      <div class="pt-4 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div>
+            <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Milestones</span>
+            <h3 class="font-serif text-xl sm:text-2xl font-bold text-[var(--text-primary)]">纪念日大事记</h3>
+          </div>
+          <button id="openAddMilestoneBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] bg-white/5 text-[var(--text-primary)] transition self-start sm:self-auto">
+            + 记录新大事记
+          </button>
+        </div>
+
+        <div id="milestonesTimeline" class="pl-1">
+          <!-- Rendered by couple.js -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION 03: HIGH-SPEED RAIL BOARDING PASS TIMELINE -->
+    <section id="footprints" class="max-w-5xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
         <div>
           <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Journey Archives</span>
           <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城车票足迹</h2>
         </div>
-        <div class="flex items-center space-x-4">
-          <span class="text-xs font-mono text-[var(--text-muted)]">共 5 趟专列记录</span>
-          <button onclick="openAddTicketModal()" class="px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-white/5 hover:bg-white/10 text-[var(--accent-gold)] transition flex items-center space-x-1">
+        <div class="flex items-center flex-wrap gap-3">
+          <span id="ticketCountLabel" class="text-xs font-mono text-[var(--text-muted)]">共 5 趟专列记录</span>
+          <button id="openAddTicketBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-white/5 hover:bg-white/10 text-[var(--accent-gold)] transition flex items-center space-x-1">
             <span>+</span> <span>规划下一张车票</span>
           </button>
         </div>
       </div>
 
-      <!-- Tickets Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="ticketsContainer">
-        <!-- Rendered dynamically by JavaScript -->
+        <!-- Rendered by tickets.js -->
       </div>
 
     </section>
 
-    <!-- SECTION 03: 35MM CINEMA FILM GALLERY -->
-    <section id="gallery" class="max-w-6xl mx-auto px-4 py-20 border-t border-[var(--border-subtle)]">
-      
-      <!-- Header & City Tabs -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 space-y-6 md:space-y-0">
+    <!-- SECTION 04: 35MM CINEMA FILM GALLERY -->
+    <section id="gallery" class="max-w-6xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-5">
         <div>
           <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// 35mm Archive Gallery</span>
           <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城胶片影集</h2>
         </div>
 
-        <!-- Filter Tabs & Test Upload -->
         <div class="flex flex-wrap items-center gap-2" id="galleryFilterTabs">
-          <!-- Populated by JS -->
+          <!-- Populated by gallery.js -->
         </div>
       </div>
 
-      <!-- Gallery Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="galleryGrid">
-        <!-- Populated by JS -->
+        <!-- Populated by gallery.js -->
       </div>
 
-      <!-- Preview Local Photo Upload Hint Modal trigger -->
       <div class="mt-8 text-center">
-        <button onclick="triggerLocalPhotoUpload()" class="text-xs font-mono text-[var(--text-muted)] hover:text-[var(--accent-gold)] border-b border-dashed border-[var(--text-muted)] transition pb-0.5">
-          📷 点击尝试本机临时预览上传 (或直接放入静态图片目录 ./images/)
+        <button id="triggerLocalPhotoBtn" class="touch-target inline-flex items-center text-xs font-mono text-[var(--text-muted)] hover:text-[var(--accent-gold)] border-b border-dashed border-[var(--text-muted)] transition pb-0.5">
+          📷 点击尝试本机临时预览上传（长期展示请将照片放入 ./images/）
         </button>
-        <input type="file" id="localPhotoInput" class="hidden" accept="image/*" onchange="handleLocalPhotoSelect(event)">
+        <input type="file" id="localPhotoInput" class="hidden" accept="image/*">
       </div>
 
     </section>
 
-    <!-- SECTION 04: EDITORIAL WISH LIST -->
-    <section id="checklist" class="max-w-4xl mx-auto px-4 py-20 border-t border-[var(--border-subtle)]">
-      
-      <div class="text-center max-w-xl mx-auto mb-12">
+    <!-- SECTION 05: EDITORIAL WISH LIST -->
+    <section id="checklist" class="max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+
+      <div class="text-center max-w-xl mx-auto mb-10">
         <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Graduate Journey Wishlist</span>
         <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-3">双城研途清单</h2>
-        <p class="text-xs sm:text-sm text-[var(--text-secondary)]">在课题、论文与实验的间隙里，一件一件陪你完成。</p>
+        <p class="text-xs sm:text-sm text-[var(--text-secondary)]">在课题、论文与实验的间隙里，小狗和小猪一件一件一起完成。</p>
       </div>
 
-      <!-- Progress Meter -->
-      <div class="glass-card p-6 rounded-2xl mb-8 space-y-3">
+      <div class="glass-card p-5 sm:p-6 rounded-2xl mb-7 space-y-3">
         <div class="flex justify-between items-center text-xs font-mono">
           <span class="text-[var(--text-secondary)]">完成进度</span>
-          <span class="text-[var(--accent-gold)] font-bold" id="wishProgressText">0 / 6 (0%)</span>
+          <span class="text-[var(--accent-gold)] font-bold" id="wishProgressText">0 / 7 (0%)</span>
         </div>
         <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-[var(--border-subtle)]">
           <div id="wishProgressBar" class="h-full bg-gradient-to-r from-amber-500/70 to-[var(--accent-gold)] transition-all duration-500" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- Wish List Container -->
       <div class="glass-card rounded-2xl divide-y divide-[var(--border-subtle)] overflow-hidden" id="wishlistContainer">
-        <!-- JS rendered -->
+        <!-- Rendered by wishlist.js -->
       </div>
 
-      <!-- Add Custom Wish Input -->
-      <form onsubmit="handleAddWish(event)" class="mt-6 flex space-x-3">
-        <input type="text" id="newWishInput" placeholder="添加一个新的研途心愿..." class="flex-grow bg-white/5 border border-[var(--border-subtle)] rounded-xl px-4 py-3 text-xs sm:text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-color)] transition">
-        <button type="submit" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-[var(--border-color)] text-xs font-mono text-[var(--accent-gold)] transition">添加</button>
+      <form id="addWishForm" class="mt-6 flex gap-3">
+        <input type="text" id="newWishInput" placeholder="添加一个新的双城心愿..." class="app-input flex-grow rounded-xl px-4 py-3 text-xs sm:text-sm">
+        <button type="submit" class="touch-target px-5 sm:px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-[var(--border-color)] text-xs font-mono text-[var(--accent-gold)] transition shrink-0">添加</button>
       </form>
 
     </section>
 
-    <!-- SECTION 05: MIDNIGHT LETTERS -->
-    <section id="letters" class="max-w-4xl mx-auto px-4 py-20 border-t border-[var(--border-subtle)]">
-      
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 space-y-4 sm:space-y-0">
+    <!-- SECTION 06: MIDNIGHT LETTERS -->
+    <section id="letters" class="max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
         <div>
           <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Midnight Correspondence</span>
           <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城来信</h2>
         </div>
-        <button onclick="openLetterDrawer()" class="px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-white/5 hover:bg-white/10 text-[var(--accent-gold)] transition">
+        <button id="openLetterDrawerBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-white/5 hover:bg-white/10 text-[var(--accent-gold)] transition self-start sm:self-auto">
           ✍️ 写一封新回信
         </button>
       </div>
 
-      <!-- Letter Tabs & Card -->
-      <div class="glass-card rounded-3xl p-6 sm:p-10 relative overflow-hidden">
-        
-        <!-- Tab Selector -->
-        <div class="flex border-b border-[var(--border-subtle)] pb-4 mb-8 space-x-6 text-xs sm:text-sm font-serif">
-          <button id="tabBeijingBtn" onclick="switchLetterTab('beijing')" class="text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)] pb-2 transition font-bold">
-            来自北京 · 实验室灯下
+      <div class="glass-card rounded-3xl p-5 sm:p-10 relative overflow-hidden">
+
+        <div class="flex flex-wrap border-b border-[var(--border-subtle)] pb-3 mb-7 gap-5 text-xs sm:text-sm font-serif">
+          <button id="tabBeijingBtn" class="text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)] pb-2 transition font-bold">
+            许金阳 · 来自北京（小狗）
           </button>
-          <button id="tabLygBtn" onclick="switchLetterTab('lyg')" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] pb-2 transition">
-            来自连云港 · 海风吹过时
+          <button id="tabLygBtn" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] pb-2 transition">
+            渐姝君 · 来自连云港（小猪）
           </button>
         </div>
 
-        <!-- Letter Content Area -->
-        <div id="letterContent" class="space-y-6 text-xs sm:text-sm text-[var(--text-secondary)] font-serif leading-relaxed min-h-[220px]">
-          <!-- Rendered by JS -->
+        <div id="letterContent" class="space-y-5 text-sm text-[var(--text-secondary)] font-serif leading-relaxed min-h-[200px]">
+          <!-- Rendered by letters.js -->
         </div>
 
-        <!-- Letter Footer info -->
-        <div class="mt-10 pt-6 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-[var(--text-muted)] gap-3">
-          <span id="letterMeta">寄件地: 北京市海淀区 · 实验室</span>
-          <button onclick="copyCurrentLetter()" class="text-[var(--accent-gold)] hover:underline flex items-center space-x-1">
+        <div class="mt-9 pt-5 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-[var(--text-muted)] gap-3">
+          <span id="letterMeta">寄件人: 许金阳（小狗） · 北京市 · 实验室灯下</span>
+          <button id="copyLetterBtn" class="touch-target text-[var(--accent-gold)] hover:underline inline-flex items-center space-x-1 self-start sm:self-auto">
             <span>📋 复制文字发给TA</span>
           </button>
         </div>
@@ -438,74 +359,205 @@
   <!-- FOOTER -->
   <footer class="border-t border-[var(--border-subtle)] py-12 px-4 z-10 text-center space-y-4">
     <div class="font-serif text-sm tracking-widest text-[var(--text-primary)]">
-      BEIJING <span class="text-[var(--accent-gold)]">⇄</span> LIANYUNGANG
+      XU JINYANG <span class="text-[var(--accent-gold)]">⇄</span> JIAN SHUJUN · BEIJING <span class="text-[var(--accent-gold)]">⇄</span> LIANYUNGANG
     </div>
-    <p class="text-xs font-mono text-[var(--text-muted)]">
-      FOR US · SINCE 2026.08.07 · 研途双城纪念册
+    <p id="footerSummary" class="text-xs font-mono text-[var(--text-muted)]">
+      小狗与小猪 · SINCE 2026.08.08 · 双城约会纪念册
     </p>
 
-    <div class="pt-4 flex justify-center items-center space-x-4 text-[11px] font-mono text-[var(--text-muted)]">
-      <button onclick="exportData()" class="hover:text-[var(--accent-gold)] transition">导出 JSON 备份</button>
+    <div class="pt-2 flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-[11px] font-mono text-[var(--text-muted)]">
+      <button id="exportDataBtn" class="hover:text-[var(--accent-gold)] transition py-1">导出 JSON 备份</button>
       <span>·</span>
-      <button onclick="triggerImportData()" class="hover:text-[var(--accent-gold)] transition">导入备份</button>
+      <button id="importDataBtn" class="hover:text-[var(--accent-gold)] transition py-1">导入备份</button>
       <span>·</span>
-      <button onclick="resetData()" class="hover:text-rose-400 transition">重置初始状态</button>
-      <input type="file" id="importInput" class="hidden" accept=".json" onchange="importData(event)">
+      <button id="resetDataBtn" class="hover:text-rose-400 transition py-1">重置初始状态</button>
+      <input type="file" id="importInput" class="hidden" accept=".json">
+    </div>
+
+    <div class="pt-1 flex justify-center">
+      <label class="inline-flex items-center gap-2 text-[11px] font-mono text-[var(--text-muted)] cursor-pointer select-none">
+        <input type="checkbox" id="lockOnOpenToggle" class="accent-amber-400 rounded">
+        <span>下次打开自动开启口令锁（前端本地锁，口令 0808）</span>
+      </label>
     </div>
   </footer>
 
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <nav aria-label="移动端快捷导航" class="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 px-2 pt-2">
+    <div class="grid grid-cols-6 gap-1 max-w-lg mx-auto text-center">
+      <a href="#hero" data-section="hero" class="mobile-nav-item active flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">✦</span>
+        <span>首页</span>
+        <span class="mobile-nav-dot"></span>
+      </a>
+      <a href="#about" data-section="about" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">♡</span>
+        <span>我们</span>
+        <span class="mobile-nav-dot"></span>
+      </a>
+      <a href="#footprints" data-section="footprints" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">🚄</span>
+        <span>车票</span>
+        <span class="mobile-nav-dot"></span>
+      </a>
+      <a href="#gallery" data-section="gallery" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">🎞</span>
+        <span>影集</span>
+        <span class="mobile-nav-dot"></span>
+      </a>
+      <a href="#checklist" data-section="checklist" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">★</span>
+        <span>心愿</span>
+        <span class="mobile-nav-dot"></span>
+      </a>
+      <a href="#letters" data-section="letters" class="mobile-nav-item flex flex-col items-center justify-center py-1 gap-0.5 text-[10px] font-mono">
+        <span class="text-sm leading-none">✉</span>
+        <span>来信</span>
+        <span class="mobile-nav-dot"></span>
+      </a>
+    </div>
+  </nav>
+
   <!-- LIGHTBOX MODAL -->
-  <div id="lightboxModal" class="fixed inset-0 z-[120] hidden bg-black/90 backdrop-blur-xl flex items-center justify-center p-4" onclick="closeLightbox()">
-    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
-      <img id="lightboxImg" src="" alt="Photo" class="max-h-[75vh] w-auto object-contain rounded-lg shadow-2xl">
-      <div id="lightboxCaption" class="mt-4 font-serif text-sm text-neutral-300 text-center"></div>
-      <button onclick="closeLightbox()" class="absolute -top-10 right-0 text-white/70 hover:text-white font-mono text-sm">✕ 关闭 (ESC)</button>
+  <div id="lightboxModal" class="fixed inset-0 z-[120] hidden bg-black/92 backdrop-blur-xl flex items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+      <img id="lightboxImg" src="" alt="Photo" class="max-h-[72vh] w-auto object-contain rounded-lg shadow-2xl">
+      <div id="lightboxCaption" class="mt-4 font-serif text-sm text-neutral-200 text-center"></div>
+      <div id="lightboxMeta" class="mt-1 font-mono text-[11px] text-neutral-400 text-center"></div>
+      <button id="closeLightboxBtn" class="touch-target absolute -top-11 right-0 text-white/80 hover:text-white font-mono text-sm px-2">✕ 关闭</button>
+    </div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div id="editProfileModal" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full max-h-[88vh] overflow-y-auto p-6 sm:p-7 rounded-3xl space-y-4" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">编辑双人档案</h3>
+        <button id="closeEditProfileBtn" class="touch-target text-[var(--text-muted)] hover:text-[var(--text-primary)] font-mono">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">选择要编辑的对象</label>
+          <select id="profilePartnerSelect" class="app-input w-full rounded-xl px-3 py-2">
+            <option value="beijing">许金阳（北京）</option>
+            <option value="lyg">渐姝君（连云港）</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">姓名</label>
+            <input type="text" id="profileNameInput" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">昵称</label>
+            <input type="text" id="profileNickInput" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+        </div>
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">身份 / 学校或研究方向</label>
+          <input type="text" id="profileRoleInput" placeholder="例: 在读研究生 · 实验室" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">生日</label>
+          <input type="text" id="profileBirthdayInput" placeholder="例: 08月08日 或 2001.05.20" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">个人标签（逗号分隔）</label>
+          <input type="text" id="profileTagsInput" placeholder="例: 北京，实验室，小狗，喜欢拍照" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">给对方的一句话</label>
+          <textarea id="profileMottoInput" rows="3" class="app-input w-full rounded-xl px-3 py-2.5 font-serif"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-2">
+        <button id="cancelEditProfileBtn" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveEditProfileBtn" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">保存档案</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MILESTONE MODAL -->
+  <div id="addMilestoneModal" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full max-h-[88vh] overflow-y-auto p-6 sm:p-7 rounded-3xl space-y-4" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">记录新的纪念日大事记</h3>
+        <button id="closeAddMilestoneBtn" class="touch-target text-[var(--text-muted)] hover:text-[var(--text-primary)] font-mono">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">日期</label>
+            <input type="text" id="milestoneDateInput" placeholder="例: 2026.12.25" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">城市</label>
+            <input type="text" id="milestoneCityInput" placeholder="例: 淄博" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+        </div>
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">事件标题</label>
+          <input type="text" id="milestoneTitleInput" placeholder="例: 一起过的第一个圣诞节" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">简短记录</label>
+          <textarea id="milestoneNoteInput" rows="3" placeholder="写下这一天的特别瞬间..." class="app-input w-full rounded-xl px-3 py-2.5"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-2">
+        <button id="cancelAddMilestoneBtn" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveMilestoneBtn" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">保存记录</button>
+      </div>
     </div>
   </div>
 
   <!-- ADD TICKET MODAL -->
   <div id="addTicketModal" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-card max-w-md w-full p-6 sm:p-8 rounded-3xl space-y-5" style="background: var(--modal-bg);">
+    <div class="glass-card max-w-md w-full max-h-[88vh] overflow-y-auto p-6 sm:p-8 rounded-3xl space-y-5" style="background: var(--modal-bg);">
       <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
         <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">规划新高铁车票</h3>
-        <button onclick="closeAddTicketModal()" class="text-[var(--text-muted)] hover:text-[var(--text-primary)] font-mono">✕</button>
+        <button id="closeAddTicketBtn" class="touch-target text-[var(--text-muted)] hover:text-[var(--text-primary)] font-mono">✕</button>
       </div>
-      
+
       <div class="space-y-4 text-xs">
         <div>
-          <label class="block font-mono text-[var(--text-muted)] mb-1">出发地 ⇄ 目的地</label>
-          <input type="text" id="ticketRoute" placeholder="例: 连云港 → 北京" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+          <label class="block font-mono text-[var(--text-muted)] mb-1">出发地 → 目的地</label>
+          <input type="text" id="ticketRoute" placeholder="例: 连云港 → 北京" class="app-input w-full rounded-xl px-3 py-2">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-mono text-[var(--text-muted)] mb-1">城市代码 (3字)</label>
-            <input type="text" id="ticketCode" placeholder="例: BJP" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+            <input type="text" id="ticketCode" placeholder="例: BJP" class="app-input w-full rounded-xl px-3 py-2">
           </div>
           <div>
             <label class="block font-mono text-[var(--text-muted)] mb-1">出行时间</label>
-            <input type="text" id="ticketDate" placeholder="例: 2027.01" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+            <input type="text" id="ticketDate" placeholder="例: 2027.01" class="app-input w-full rounded-xl px-3 py-2">
           </div>
         </div>
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">行程主题/副标题</label>
-          <input type="text" id="ticketSubtitle" placeholder="例: 寒假跨年旅行" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+          <input type="text" id="ticketSubtitle" placeholder="例: 寒假跨年旅行" class="app-input w-full rounded-xl px-3 py-2">
         </div>
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">行程描述与寄语</label>
-          <textarea id="ticketDesc" rows="3" placeholder="写下对这次相聚的期待..." class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]"></textarea>
+          <textarea id="ticketDesc" rows="3" placeholder="写下对这次相聚的期待..." class="app-input w-full rounded-xl px-3 py-2.5"></textarea>
         </div>
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">出票状态</label>
-          <select id="ticketStatus" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+          <select id="ticketStatus" class="app-input w-full rounded-xl px-3 py-2">
             <option value="已检票">已检票</option>
             <option value="待出票" selected>待出票</option>
           </select>
         </div>
       </div>
 
-      <div class="flex justify-end space-x-3 pt-3">
-        <button onclick="closeAddTicketModal()" class="px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
-        <button onclick="saveNewTicket()" class="px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">保存车票</button>
+      <div class="flex justify-end space-x-3 pt-2">
+        <button id="cancelAddTicketBtn" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveNewTicketBtn" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">保存车票</button>
       </div>
     </div>
   </div>
@@ -517,654 +569,47 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">见面日期</label>
-          <input type="date" id="nextMeetDateInput" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+          <input type="date" id="nextMeetDateInput" class="app-input w-full rounded-xl px-3 py-2">
         </div>
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">见面地点/名称</label>
-          <input type="text" id="nextMeetCityInput" placeholder="例: 淄博 / 北京" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
+          <input type="text" id="nextMeetCityInput" placeholder="例: 淄博 / 北京" class="app-input w-full rounded-xl px-3 py-2">
         </div>
       </div>
       <div class="flex justify-end space-x-2 pt-2">
-        <button onclick="closeNextMeetModal()" class="px-3 py-1.5 rounded-lg text-xs font-mono text-[var(--text-muted)]">取消</button>
-        <button onclick="saveNextMeet()" class="px-4 py-1.5 rounded-lg text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">确定</button>
+        <button id="cancelNextMeetBtn" class="touch-target px-3 py-1.5 rounded-lg text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveNextMeetBtn" class="touch-target px-4 py-1.5 rounded-lg text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">确定</button>
       </div>
     </div>
   </div>
 
   <!-- LETTER DRAWER MODAL -->
   <div id="letterDrawer" class="fixed inset-0 z-[110] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-card max-w-lg w-full p-6 sm:p-8 rounded-3xl space-y-5" style="background: var(--modal-bg);">
+    <div class="glass-card max-w-lg w-full max-h-[88vh] overflow-y-auto p-6 sm:p-8 rounded-3xl space-y-5" style="background: var(--modal-bg);">
       <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
         <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">撰写双城回信</h3>
-        <button onclick="closeLetterDrawer()" class="text-[var(--text-muted)] font-mono">✕</button>
+        <button id="closeLetterDrawerBtn" class="touch-target text-[var(--text-muted)] font-mono">✕</button>
       </div>
       <div class="space-y-4 text-xs">
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">写信人视角</label>
-          <select id="letterAuthorSelect" class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-2 text-[var(--text-primary)]">
-            <option value="beijing">来自北京 · 实验室灯下</option>
-            <option value="lyg">来自连云港 · 海风吹过时</option>
+          <select id="letterAuthorSelect" class="app-input w-full rounded-xl px-3 py-2">
+            <option value="beijing">许金阳 · 来自北京（小狗）</option>
+            <option value="lyg">渐姝君 · 来自连云港（小猪）</option>
           </select>
         </div>
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">信件内容</label>
-          <textarea id="letterBodyInput" rows="6" placeholder="写下今天做实验的心情、或是对TA的思念..." class="w-full bg-white/5 border border-[var(--border-subtle)] rounded-xl px-3 py-3 text-[var(--text-primary)] leading-relaxed font-serif"></textarea>
+          <textarea id="letterBodyInput" rows="7" placeholder="写下今天的心情、或是对TA的思念..." class="app-input w-full rounded-xl px-3 py-3 leading-relaxed font-serif"></textarea>
         </div>
       </div>
       <div class="flex justify-end space-x-3 pt-2">
-        <button onclick="closeLetterDrawer()" class="px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
-        <button onclick="saveLetter()" class="px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">更新保存</button>
+        <button id="cancelLetterDrawerBtn" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveLetterBtn" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">更新保存</button>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    /* ==========================================================================
-       1. INITIAL DATA STRUCTURE (ACCURATE FOR REAL COUPLE)
-       ========================================================================== */
-    const START_DATE = "2026-08-07T00:00:00";
-
-    const INITIAL_TICKETS = [
-      {
-        id: "t1",
-        date: "2026.08.07 – 08.09",
-        code: "ZZG",
-        route: "北京 / 连云港 → 枣庄",
-        subtitle: "初遇 · 去了她家那边",
-        desc: "第一次奔赴，夏末的风吹过枣庄，所有的故事从这一张车票开始。",
-        status: "已检票"
-      },
-      {
-        id: "t2",
-        date: "2026.09",
-        code: "TNA",
-        route: "双城专列 → 济南",
-        subtitle: "泉城重逢",
-        desc: "初秋的济南，在泉水与老街巷里慢慢走，把想念折进晚风里。",
-        status: "已检票"
-      },
-      {
-        id: "t3",
-        date: "2026.10",
-        code: "LYG",
-        route: "北京 → 连云港",
-        subtitle: "奔赴山海",
-        desc: "来到她读书的城市，吹了她日常吹过的海风，走了她走过的路。",
-        status: "已检票"
-      },
-      {
-        id: "t4",
-        date: "2026.11.01",
-        code: "XUZ",
-        route: "京沪 / 徐连 → 徐州",
-        subtitle: "彭城交汇",
-        desc: "在京沪与徐连的交汇点重逢，看晚秋日落，吃热气腾腾的烟火味道。",
-        status: "已检票"
-      },
-      {
-        id: "t5",
-        date: "2026.12",
-        code: "TBD",
-        route: "双城 → 下一站",
-        subtitle: "冬日筹备中",
-        desc: "也许是淄博的琉璃夜色，或是任何有你的地方——只要目的地写着你的名字。",
-        status: "待出票"
-      }
-    ];
-
-    const INITIAL_PHOTOS = [
-      {
-        city: "枣庄",
-        date: "2026.08.07",
-        title: "夏末初遇 · 枣庄",
-        path: "./images/01_zaozhuang_0807.jpg",
-        gradient: "linear-gradient(135deg, #1f2937, #111827)",
-        presetMeta: "35mm · f/1.8 · ISO 200 · Zaozhuang"
-      },
-      {
-        city: "济南",
-        date: "2026.09",
-        title: "泉城秋意 · 济南",
-        path: "./images/02_jinan_09.jpg",
-        gradient: "linear-gradient(135deg, #2b1f1d, #140d0c)",
-        presetMeta: "35mm · f/2.0 · ISO 400 · Jinan"
-      },
-      {
-        city: "连云港",
-        date: "2026.10",
-        title: "海风吹过 · 连云港",
-        path: "./images/03_lianyungang_10.jpg",
-        gradient: "linear-gradient(135deg, #0f2027, #203a43)",
-        presetMeta: "35mm · f/1.4 · ISO 100 · Lianyungang"
-      },
-      {
-        city: "徐州",
-        date: "2026.11.01",
-        title: "彭城晚秋 · 徐州",
-        path: "./images/04_xuzhou_1101.jpg",
-        gradient: "linear-gradient(135deg, #371a00, #1a0c00)",
-        presetMeta: "35mm · f/2.8 · ISO 800 · Xuzhou"
-      }
-    ];
-
-    const INITIAL_WISHES = [
-      { id: "w1", text: "攒满十张往返彼此城市的高铁票根", done: false },
-      { id: "w2", text: "一起在海边或湖畔看一次完整的橘子海日落", done: true },
-      { id: "w3", text: "各自顺利完成论文与目标后开启一场不看返程票的旅行", done: false },
-      { id: "w4", text: "拍一套属于我们的胶片写真", done: false },
-      { id: "w5", text: "去淄博看海岱楼夜景吃一顿热乎烧烤", done: false },
-      { id: "w6", text: "在冬夜里一起压一次不赶时间的马路", done: true }
-    ];
-
-    const INITIAL_LETTERS = {
-      beijing: {
-        title: "来自北京 · 实验室灯下",
-        meta: "寄件地: 北京市海淀区 · 实验室灯下",
-        text: `做完最后一组组培/数据分析，实验室里的人差不多都走光了。\n\n北京的夜晚开始降温，走在回宿舍的路上，看着校园里的银杏叶落在马路上，突然就很想你。科研的压力和重复的实验有时候让人疲惫，但只要想到周末就能在高铁站见到你，心里就有了一块无比安心的锚点。\n\n我们在不同的城市各自努力，你在海边看文献，我在京华写代码。山海虽然有距离，但我们的未来在同一个地方。等你过来，或者我奔赴你。`
-      },
-      lyg: {
-        title: "来自连云港 · 海风吹过时",
-        meta: "寄件地: 连云港市连云区 · 课题组窗口",
-        text: `今天连云港的海风很大，从课题组窗口望出去，大海是一片很深沉的蓝色。\n\n整理文献的时候，把我们上次在徐州吃热气腾腾羊肉汤的照片拿出来看了很久。虽然隔着七百多公里，但每天晚上打视频听你讲实验室的趣事，就觉得你其实一直都在我身边。\n\n研究生这几年可能会有点苦，但因为有你，所有的坚持都有了极其清晰的意义。好好吃饭，别熬夜太晚，下一站见！`
-      }
-    };
-
-    /* App State Storage */
-    let tickets = JSON.parse(localStorage.getItem('bj_lyg_tickets')) || INITIAL_TICKETS;
-    let wishes = JSON.parse(localStorage.getItem('bj_lyg_wishes')) || INITIAL_WISHES;
-    let letters = JSON.parse(localStorage.getItem('bj_lyg_letters')) || INITIAL_LETTERS;
-    let nextMeet = JSON.parse(localStorage.getItem('bj_lyg_next_meet')) || { date: "2026-12-25", city: "淄博 / 待定" };
-    let currentFilter = "全部";
-    let activeLetterTab = "beijing";
-
-    /* ==========================================================================
-       2. LIVE TICKING COUNTERS
-       ========================================================================== */
-    function updateCounters() {
-      const now = new Date();
-      const start = new Date(START_DATE);
-      const diffMs = now - start;
-
-      if (diffMs > 0) {
-        const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
-        const mins = Math.floor((diffMs / (1000 * 60)) % 60);
-        const secs = Math.floor((diffMs / 1000) % 60);
-
-        const pad = (n) => String(n).padStart(2, '0');
-        document.getElementById('loveCounter').innerHTML = 
-          `${days}<span class="text-xs font-normal text-[var(--text-muted)]">天</span> ${pad(hours)}:${pad(mins)}:${pad(secs)}`;
-      }
-
-      // Next Meet Countdown
-      if (nextMeet.date) {
-        const nextDate = new Date(nextMeet.date + "T00:00:00");
-        const meetDiff = nextDate - now;
-        if (meetDiff > 0) {
-          const mDays = Math.ceil(meetDiff / (1000 * 60 * 60 * 24));
-          document.getElementById('nextMeetCounter').innerHTML = 
-            `${mDays}<span class="text-xs font-normal text-[var(--text-muted)]">天后相见</span>`;
-        } else {
-          document.getElementById('nextMeetCounter').innerHTML = `赴约中 / 今相见`;
-        }
-        document.getElementById('nextMeetCity').innerText = `下一站: ${nextMeet.city}`;
-      }
-    }
-    setInterval(updateCounters, 1000);
-    updateCounters();
-
-    /* ==========================================================================
-       3. THEME SWITCHER
-       ========================================================================== */
-    function toggleTheme() {
-      const body = document.body;
-      const current = body.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      body.setAttribute('data-theme', next);
-      localStorage.setItem('bj_lyg_theme', next);
-
-      document.getElementById('themeIcon').innerText = next === 'dark' ? '🌙' : '☀️';
-      document.getElementById('themeLabel').innerText = next === 'dark' ? '暗夜星轨' : '海风画报';
-    }
-
-    // Load saved theme preference
-    const savedTheme = localStorage.getItem('bj_lyg_theme') || 'dark';
-    document.body.setAttribute('data-theme', savedTheme);
-    document.getElementById('themeIcon').innerText = savedTheme === 'dark' ? '🌙' : '☀️';
-    document.getElementById('themeLabel').innerText = savedTheme === 'dark' ? '暗夜星轨' : '海风画报';
-
-    /* ==========================================================================
-       4. HIGH SPEED RAIL TICKET RENDERER
-       ========================================================================== */
-    function renderTickets() {
-      const container = document.getElementById('ticketsContainer');
-      container.innerHTML = tickets.map(t => `
-        <div class="ticket-card p-6 rounded-2xl flex flex-col justify-between space-y-4">
-          
-          <!-- Top Monospace Barcode & Seat Header -->
-          <div class="flex items-center justify-between border-b border-dashed border-[var(--border-subtle)] pb-3">
-            <div class="flex items-center space-x-2">
-              <span class="font-mono text-xs font-bold text-[var(--accent-gold)]">${t.code}</span>
-              <span class="text-[10px] font-mono text-[var(--text-muted)]">| 研究生双城专列</span>
-            </div>
-            <button onclick="toggleTicketStatus('${t.id}')" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono border ${t.status === '已检票' ? 'border-amber-500/40 text-amber-400 bg-amber-500/10' : 'border-dashed border-white/20 text-[var(--text-muted)]'}">
-              ${t.status} ⚡
-            </button>
-          </div>
-
-          <!-- Main Route & Date -->
-          <div>
-            <div class="flex items-baseline justify-between mb-1">
-              <h3 class="font-serif text-lg font-bold text-[var(--text-primary)] tracking-wide">${t.route}</h3>
-            </div>
-            <div class="text-xs font-mono text-[var(--accent-gold)] mb-2">${t.date} · ${t.subtitle}</div>
-            <p class="text-xs text-[var(--text-secondary)] leading-relaxed font-sans">${t.desc}</p>
-          </div>
-
-          <!-- Barcode Footer Pattern -->
-          <div class="pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between">
-            <div class="w-32 h-5 barcode-line opacity-40"></div>
-            <span class="font-mono text-[9px] text-[var(--text-muted)] tracking-widest">TICKET ID: ${t.id.toUpperCase()}</span>
-          </div>
-
-        </div>
-      `).join('');
-    }
-
-    function toggleTicketStatus(id) {
-      tickets = tickets.map(t => t.id === id ? { ...t, status: t.status === '已检票' ? '待出票' : '已检票' } : t);
-      localStorage.setItem('bj_lyg_tickets', JSON.stringify(tickets));
-      renderTickets();
-    }
-
-    function openAddTicketModal() {
-      document.getElementById('addTicketModal').classList.remove('hidden');
-    }
-    function closeAddTicketModal() {
-      document.getElementById('addTicketModal').classList.add('hidden');
-    }
-    function saveNewTicket() {
-      const route = document.getElementById('ticketRoute').value || "双城专列";
-      const code = (document.getElementById('ticketCode').value || "MEM").toUpperCase();
-      const date = document.getElementById('ticketDate').value || "2027.01";
-      const subtitle = document.getElementById('ticketSubtitle').value || "未命名之旅";
-      const desc = document.getElementById('ticketDesc').value || "期待下一次重逢。";
-      const status = document.getElementById('ticketStatus').value;
-
-      tickets.push({
-        id: "t" + Date.now(),
-        route, code, date, subtitle, desc, status
-      });
-      localStorage.setItem('bj_lyg_tickets', JSON.stringify(tickets));
-      renderTickets();
-      closeAddTicketModal();
-    }
-
-    /* ==========================================================================
-       5. 35MM CINEMA GALLERY RENDERER & FALLBACK
-       ========================================================================== */
-    function renderGallery() {
-      // Filter Tabs
-      const cities = ["全部", "枣庄", "济南", "连云港", "徐州"];
-      const tabsContainer = document.getElementById('galleryFilterTabs');
-      tabsContainer.innerHTML = cities.map(c => `
-        <button onclick="setGalleryFilter('${c}')" class="px-3 py-1 rounded-full text-xs font-mono transition ${currentFilter === c ? 'bg-[var(--accent-gold)] text-black font-bold' : 'bg-white/5 text-[var(--text-secondary)] hover:bg-white/10'}">
-          ${c}
-        </button>
-      `).join('');
-
-      const grid = document.getElementById('galleryGrid');
-      const filtered = currentFilter === "全部" ? INITIAL_PHOTOS : INITIAL_PHOTOS.filter(p => p.city === currentFilter);
-
-      grid.innerHTML = filtered.map((p, idx) => `
-        <div class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between cursor-pointer transition hover:scale-[1.02]" onclick="openLightbox('${p.path}', '${p.title}')">
-          
-          <!-- Image frame with 35mm cinema aesthetic -->
-          <div class="relative w-full aspect-[4/3] bg-black overflow-hidden">
-            
-            <img src="${p.path}" 
-                 alt="${p.title}" 
-                 class="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                 onerror="handleGalleryImgError(this, '${p.title}', '${p.presetMeta}', '${p.path}', '${p.gradient}')">
-
-            <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/60 backdrop-blur-md text-[9px] font-mono text-amber-200/90 border border-white/10">
-              FRAME 0${idx + 1} // 35mm
-            </div>
-
-          </div>
-
-          <!-- Bottom Caption Metadata -->
-          <div class="p-4 space-y-1">
-            <div class="flex items-center justify-between text-xs">
-              <span class="font-serif font-bold text-[var(--text-primary)]">${p.title}</span>
-              <span class="font-mono text-[10px] text-[var(--accent-gold)]">${p.city}</span>
-            </div>
-            <div class="text-[10px] font-mono text-[var(--text-muted)] flex justify-between">
-              <span>${p.date}</span>
-              <span>RAW ARCHIVE</span>
-            </div>
-          </div>
-
-        </div>
-      `).join('');
-    }
-
-    function setGalleryFilter(city) {
-      currentFilter = city;
-      renderGallery();
-    }
-
-    // Elegant fallback SVG frame when local static images aren't present yet
-    function handleGalleryImgError(imgElem, title, meta, originalPath, fallbackGradient) {
-      const parent = imgElem.parentElement;
-      parent.innerHTML = `
-        <div class="w-full h-full p-4 flex flex-col justify-between text-neutral-300 relative overflow-hidden" style="background: ${fallbackGradient};">
-          <!-- Viewfinder Crosshairs -->
-          <div class="absolute inset-2 border border-white/10 pointer-events-none"></div>
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40px] opacity-10 font-serif">35mm</div>
-
-          <div class="flex justify-between items-center text-[9px] font-mono opacity-60 z-10">
-            <span>[ + ] FOCUS</span>
-            <span>${meta}</span>
-          </div>
-
-          <div class="text-center my-auto space-y-1 z-10 px-2">
-            <div class="font-serif text-sm font-bold text-amber-100/90">${title}</div>
-            <div class="text-[10px] font-mono text-neutral-400">放入 ${originalPath} 自动显示</div>
-          </div>
-
-          <div class="flex justify-between items-center text-[8px] font-mono text-neutral-500 z-10">
-            <span>FILE HINT</span>
-            <span>EXPOSURE READY</span>
-          </div>
-        </div>
-      `;
-    }
-
-    /* Lightbox Modal */
-    function openLightbox(src, title) {
-      document.getElementById('lightboxImg').src = src;
-      document.getElementById('lightboxCaption').innerText = title;
-      document.getElementById('lightboxModal').classList.remove('hidden');
-    }
-    function closeLightbox() {
-      document.getElementById('lightboxModal').classList.add('hidden');
-    }
-
-    /* Local Photo Preview Upload */
-    function triggerLocalPhotoUpload() {
-      document.getElementById('localPhotoInput').click();
-    }
-    function handleLocalPhotoSelect(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          INITIAL_PHOTOS.unshift({
-            city: "本机试传",
-            date: "NOW",
-            title: file.name.substring(0, 10),
-            path: evt.target.result,
-            gradient: "linear-gradient(135deg, #1f2937, #111827)",
-            presetMeta: "35mm · Local Preview"
-          });
-          renderGallery();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    /* ==========================================================================
-       6. WISH LIST RENDERER
-       ========================================================================== */
-    function renderWishlist() {
-      const container = document.getElementById('wishlistContainer');
-      container.innerHTML = wishes.map((w, idx) => `
-        <div class="p-4 sm:p-5 flex items-center justify-between group hover:bg-white/5 transition">
-          <div class="flex items-center space-x-4">
-            <button onclick="toggleWish('${w.id}')" class="w-6 h-6 rounded-full border flex items-center justify-center transition ${w.done ? 'bg-[var(--accent-gold)] border-[var(--accent-gold)] text-black' : 'border-[var(--border-subtle)] text-transparent'}">
-              ✓
-            </button>
-            <span class="text-xs sm:text-sm font-sans ${w.done ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'}">
-              ${idx + 1}. ${w.text}
-            </span>
-          </div>
-          <button onclick="deleteWish('${w.id}')" class="text-xs font-mono text-[var(--text-muted)] opacity-0 group-hover:opacity-100 hover:text-rose-400 transition">删除</button>
-        </div>
-      `).join('');
-
-      // Update progress bar
-      const doneCount = wishes.filter(w => w.done).length;
-      const total = wishes.length;
-      const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-
-      document.getElementById('wishProgressText').innerText = `${doneCount} / ${total} (${pct}%)`;
-      document.getElementById('wishProgressBar').style.width = `${pct}%`;
-    }
-
-    function toggleWish(id) {
-      wishes = wishes.map(w => w.id === id ? { ...w, done: !w.done } : w);
-      localStorage.setItem('bj_lyg_wishes', JSON.stringify(wishes));
-      renderWishlist();
-    }
-    function deleteWish(id) {
-      wishes = wishes.filter(w => w.id !== id);
-      localStorage.setItem('bj_lyg_wishes', JSON.stringify(wishes));
-      renderWishlist();
-    }
-    function handleAddWish(e) {
-      e.preventDefault();
-      const input = document.getElementById('newWishInput');
-      if (input.value.trim()) {
-        wishes.push({ id: "w" + Date.now(), text: input.value.trim(), done: false });
-        localStorage.setItem('bj_lyg_wishes', JSON.stringify(wishes));
-        input.value = "";
-        renderWishlist();
-      }
-    }
-
-    /* ==========================================================================
-       7. MIDNIGHT LETTERS LOGIC
-       ========================================================================== */
-    function renderLetter() {
-      const l = letters[activeLetterTab];
-      const bodyContainer = document.getElementById('letterContent');
-      const metaContainer = document.getElementById('letterMeta');
-
-      bodyContainer.innerHTML = l.text.split('\n\n').map(p => `<p class="leading-relaxed">${p}</p>`).join('');
-      metaContainer.innerText = l.meta;
-
-      const beijingBtn = document.getElementById('tabBeijingBtn');
-      const lygBtn = document.getElementById('tabLygBtn');
-
-      if (activeLetterTab === 'beijing') {
-        beijingBtn.className = "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)] pb-2 transition font-bold";
-        lygBtn.className = "text-[var(--text-muted)] hover:text-[var(--text-primary)] pb-2 transition";
-      } else {
-        lygBtn.className = "text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)] pb-2 transition font-bold";
-        beijingBtn.className = "text-[var(--text-muted)] hover:text-[var(--text-primary)] pb-2 transition";
-      }
-    }
-
-    function switchLetterTab(tab) {
-      activeLetterTab = tab;
-      renderLetter();
-    }
-
-    function openLetterDrawer() {
-      document.getElementById('letterAuthorSelect').value = activeLetterTab;
-      document.getElementById('letterBodyInput').value = letters[activeLetterTab].text;
-      document.getElementById('letterDrawer').classList.remove('hidden');
-    }
-    function closeLetterDrawer() {
-      document.getElementById('letterDrawer').classList.add('hidden');
-    }
-    function saveLetter() {
-      const author = document.getElementById('letterAuthorSelect').value;
-      const text = document.getElementById('letterBodyInput').value;
-      if (text) {
-        letters[author].text = text;
-        localStorage.setItem('bj_lyg_letters', JSON.stringify(letters));
-        activeLetterTab = author;
-        renderLetter();
-        closeLetterDrawer();
-      }
-    }
-
-    function copyCurrentLetter() {
-      const textToCopy = `${letters[activeLetterTab].title}\n${letters[activeLetterTab].meta}\n\n${letters[activeLetterTab].text}`;
-      
-      const el = document.createElement('textarea');
-      el.value = textToCopy;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-
-      alert('信件文字已成功复制到剪贴板，可以粘贴发给TA了！');
-    }
-
-    /* ==========================================================================
-       8. PASSCODE & UTILITIES
-       ========================================================================== */
-    function enableLockScreen() {
-      document.getElementById('lockScreen').classList.remove('hidden');
-    }
-    function checkPasscode() {
-      const val = document.getElementById('passcodeInput').value;
-      if (val === '0807') {
-        document.getElementById('lockScreen').classList.add('hidden');
-        document.getElementById('passcodeError').classList.add('hidden');
-        document.getElementById('passcodeInput').value = '';
-      } else {
-        document.getElementById('passcodeError').classList.remove('hidden');
-      }
-    }
-
-    /* Next Meet Modal */
-    function openNextMeetModal() {
-      document.getElementById('nextMeetDateInput').value = nextMeet.date || "2026-12-25";
-      document.getElementById('nextMeetCityInput').value = nextMeet.city || "淄博 / 待定";
-      document.getElementById('nextMeetModal').classList.remove('hidden');
-    }
-    function closeNextMeetModal() {
-      document.getElementById('nextMeetModal').classList.add('hidden');
-    }
-    function saveNextMeet() {
-      const date = document.getElementById('nextMeetDateInput').value;
-      const city = document.getElementById('nextMeetCityInput').value;
-      nextMeet = { date, city };
-      localStorage.setItem('bj_lyg_next_meet', JSON.stringify(nextMeet));
-      updateCounters();
-      closeNextMeetModal();
-    }
-
-    /* Data Backup & Restore */
-    function exportData() {
-      const dump = { tickets, wishes, letters, nextMeet };
-      const blob = new Blob([JSON.stringify(dump, null, 2)], { type: "application/json" });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `bj_lyg_backup_${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-    }
-    function triggerImportData() {
-      document.getElementById('importInput').click();
-    }
-    function importData(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          try {
-            const parsed = JSON.parse(evt.target.result);
-            if (parsed.tickets) localStorage.setItem('bj_lyg_tickets', JSON.stringify(parsed.tickets));
-            if (parsed.wishes) localStorage.setItem('bj_lyg_wishes', JSON.stringify(parsed.wishes));
-            if (parsed.letters) localStorage.setItem('bj_lyg_letters', JSON.stringify(parsed.letters));
-            if (parsed.nextMeet) localStorage.setItem('bj_lyg_next_meet', JSON.stringify(parsed.nextMeet));
-            location.reload();
-          } catch(err) {
-            alert('无效的 JSON 备份文件');
-          }
-        };
-        reader.readAsText(file);
-      }
-    }
-    function resetData() {
-      if (confirm('确定恢复初始状态吗？您自定义的心愿和车票将被重置。')) {
-        localStorage.clear();
-        location.reload();
-      }
-    }
-
-    /* ==========================================================================
-       9. STARFIELD / AMBIENT CANVAS ANIMATION
-       ========================================================================== */
-    const canvas = document.getElementById('ambientCanvas');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initStars();
-    }
-    window.addEventListener('resize', resizeCanvas);
-
-    function initStars() {
-      stars = [];
-      const count = Math.floor((canvas.width * canvas.height) / 9000);
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: Math.random() * 1.5 + 0.5,
-          alpha: Math.random(),
-          speed: Math.random() * 0.01 + 0.003
-        });
-      }
-    }
-
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const isDark = document.body.getAttribute('data-theme') === 'dark';
-      ctx.fillStyle = isDark ? '#E5C185' : '#3A6B9F';
-
-      stars.forEach(s => {
-        s.alpha += s.speed;
-        if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
-        ctx.globalAlpha = Math.abs(s.alpha) * (isDark ? 0.7 : 0.4);
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      requestAnimationFrame(animateStars);
-    }
-
-    /* ==========================================================================
-       10. PAGE INIT
-       ========================================================================== */
-    window.onload = function() {
-      resizeCanvas();
-      animateStars();
-      renderTickets();
-      renderGallery();
-      renderWishlist();
-      renderLetter();
-
-      // Keyboard escape for modal
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeLightbox();
-          closeAddTicketModal();
-          closeNextMeetModal();
-          closeLetterDrawer();
-        }
-      });
-    };
-  </script>
-
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>
