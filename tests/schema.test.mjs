@@ -31,10 +31,22 @@ test('createDefaultState contains accurate couple info, 2026-08-08 start date, 0
   assert.equal(state.wishes[0].text, CORE_WISH_TEXT);
   assert.equal(state.wishes[0].pinned, true);
   assert.equal(state.tickets[0].date, '2026.08.08 – 08.09');
-  assert.equal(state.photos[0].path, './images/01_zaozhuang_0808.webp');
+  assert.equal(state.photos.length, 7);
+  assert.equal(state.photos[0].path, './images/01_jinan_baotuquan.webp');
   assert.equal(state.milestones.length >= 4, true);
   assert.equal(state.letters.beijing.authorName, '许金阳');
   assert.equal(state.letters.lyg.authorName, '渐姝君');
+});
+
+test('normalizeState upgrades legacy placeholder-only photos to real gallery photos', () => {
+  const upgraded = normalizeState({
+    photos: [
+      { id: 'p1', city: '枣庄', title: '旧占位', path: './images/01_zaozhuang_0808.webp' },
+      { id: 'p2', city: '济南', title: '旧占位', path: './images/02_jinan_09.webp' }
+    ]
+  });
+  assert.equal(upgraded.photos.length, 7);
+  assert.equal(upgraded.photos[0].path, './images/01_jinan_baotuquan.webp');
 });
 
 test('createDefaultState returns deep clones so mutations do not leak across calls', () => {

@@ -206,9 +206,22 @@ export function normalizeState(input) {
     ? input.milestones.map(normalizeMilestone)
     : defaults.milestones;
 
-  const photos = Array.isArray(input.photos)
+  const LEGACY_PLACEHOLDER_PHOTO_PATHS = new Set([
+    './images/01_zaozhuang_0808.webp',
+    './images/02_jinan_09.webp',
+    './images/03_lianyungang_10.webp',
+    './images/04_xuzhou_1101.webp'
+  ]);
+
+  const rawPhotos = Array.isArray(input.photos)
     ? input.photos.map(normalizePhoto)
     : defaults.photos;
+
+  const isOnlyLegacyPlaceholders =
+    rawPhotos.length > 0 &&
+    rawPhotos.every((p) => LEGACY_PLACEHOLDER_PHOTO_PATHS.has(p.path));
+
+  const photos = isOnlyLegacyPlaceholders ? defaults.photos : rawPhotos;
 
   const wishes = Array.isArray(input.wishes)
     ? input.wishes.map(normalizeWish).filter((w) => w.text.length > 0)

@@ -87,11 +87,11 @@ export function initGalleryModule(store) {
       .map(
         (p, idx) => `
         <article data-photo-id="${escapeHtml(p.id)}" class="glass-card rounded-2xl overflow-hidden group flex flex-col justify-between cursor-pointer transition hover:scale-[1.01]">
-          <div class="photo-frame relative w-full aspect-[4/3] bg-black overflow-hidden">
+          <div class="photo-frame relative w-full aspect-[3/4] bg-black overflow-hidden">
             <img src="${escapeHtml(p.path)}"
                  alt="${escapeHtml(p.title)}"
                  loading="lazy"
-                 class="gallery-img w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                 class="gallery-img w-full h-full object-cover object-[50%_25%] group-hover:scale-105 transition duration-500" />
             <div class="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/60 backdrop-blur-md text-[9px] font-mono text-amber-200/90 border border-white/10 pointer-events-none">
               FRAME ${String(idx + 1).padStart(2, '0')} // 35mm
             </div>

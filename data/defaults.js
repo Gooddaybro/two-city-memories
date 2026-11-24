@@ -161,47 +161,80 @@ export const DEFAULT_STATE = {
   photos: [
     {
       id: 'p1',
-      city: '枣庄',
-      date: '2026.08.08',
-      title: '夏末初遇 · 枣庄',
-      path: './images/01_zaozhuang_0808.webp',
-      caption: '2026.08.08 · 小狗与小猪的第一次相聚',
-      tags: ['枣庄', '初遇'],
-      gradient: 'linear-gradient(135deg, #1f2937, #111827)',
-      presetMeta: '35mm · f/1.8 · ISO 200 · Zaozhuang'
+      city: '济南',
+      date: '2026.09',
+      title: '趵突泉重逢 · 济南',
+      path: './images/01_jinan_baotuquan.webp',
+      caption: '2026.09 · 济南第一泉旁相视而笑的小狗与小猪',
+      tags: ['济南', '趵突泉', '合影'],
+      gradient: 'linear-gradient(135deg, #2b1f1d, #140d0c)',
+      presetMeta: '35mm · f/2.0 · ISO 200 · Jinan'
     },
     {
       id: 'p2',
-      city: '济南',
-      date: '2026.09',
-      title: '泉城秋意 · 济南',
-      path: './images/02_jinan_09.webp',
-      caption: '2026.09 · 泉城街巷与晚风',
-      tags: ['济南', '初秋'],
-      gradient: 'linear-gradient(135deg, #2b1f1d, #140d0c)',
-      presetMeta: '35mm · f/2.0 · ISO 400 · Jinan'
+      city: '连云港',
+      date: '2026.10',
+      title: '海岸晚风 · 连云港',
+      path: './images/02_lianyungang_sea.webp',
+      caption: '2026.10 · 连云港的落日海风与温柔的小猪',
+      tags: ['连云港', '海边', '渐姝君'],
+      gradient: 'linear-gradient(135deg, #0f2027, #203a43)',
+      presetMeta: '35mm · f/1.8 · ISO 100 · Lianyungang'
     },
     {
       id: 'p3',
       city: '连云港',
       date: '2026.10',
-      title: '海风吹过 · 连云港',
-      path: './images/03_lianyungang_10.webp',
-      caption: '2026.10 · 奔赴小猪的城市看海',
-      tags: ['连云港', '海风'],
-      gradient: 'linear-gradient(135deg, #0f2027, #203a43)',
-      presetMeta: '35mm · f/1.4 · ISO 100 · Lianyungang'
+      title: '夜晚校园 · 连云港',
+      path: './images/03_lianyungang_campus.webp',
+      caption: '2026.10 · 来到小猪读书的校园，夜色里的并肩合影',
+      tags: ['连云港', '校园', '合影'],
+      gradient: 'linear-gradient(135deg, #111827, #090d16)',
+      presetMeta: '35mm · f/1.4 · ISO 800 · Lianyungang'
     },
     {
       id: 'p4',
+      city: '连云港',
+      date: '2026.10.05',
+      title: '手腕画心 · 我爱你',
+      path: './images/04_lianyungang_heart.webp',
+      caption: '2026.10.05 · 听着卢广仲《我爱你》，认真在手腕画下一颗心',
+      tags: ['连云港', '日常', '心动'],
+      gradient: 'linear-gradient(135deg, #2c1e16, #140d0a)',
+      presetMeta: '35mm · f/2.0 · ISO 400 · Lianyungang'
+    },
+    {
+      id: 'p5',
+      city: '连云港',
+      date: '2026.10.05',
+      title: '小太阳与粉红爱心',
+      path: './images/05_lianyungang_sun_heart.webp',
+      caption: '2026.10.05 · 手腕上的太阳与爱心，把温暖随身带着走',
+      tags: ['连云港', '细节', '浪漫'],
+      gradient: 'linear-gradient(135deg, #27221f, #141210)',
+      presetMeta: '35mm · f/2.2 · ISO 200 · Lianyungang'
+    },
+    {
+      id: 'p6',
       city: '徐州',
       date: '2026.11.01',
-      title: '彭城晚秋 · 徐州',
-      path: './images/04_xuzhou_1101.webp',
-      caption: '2026.11.01 · 京沪线与徐连线交汇处',
-      tags: ['徐州', '晚秋'],
+      title: '夜色长桥 · 彭城',
+      path: './images/06_xuzhou_night_bridge.webp',
+      caption: '2026.11.01 · 晚秋灯火与桥栏上并肩同行的两个影子',
+      tags: ['徐州', '夜景', '剪影'],
       gradient: 'linear-gradient(135deg, #371a00, #1a0c00)',
-      presetMeta: '35mm · f/2.8 · ISO 800 · Xuzhou'
+      presetMeta: '35mm · f/2.0 · ISO 800 · Xuzhou'
+    },
+    {
+      id: 'p7',
+      city: '徐州',
+      date: '2026.11.01',
+      title: '电梯合影 · 重逢瞬间',
+      path: './images/07_reunion_elevator.webp',
+      caption: '2026.11.01 · 跨越几百公里重逢，最贪恋靠在一起的每一秒',
+      tags: ['徐州', '合影', '日常'],
+      gradient: 'linear-gradient(135deg, #2b2118, #140f0b)',
+      presetMeta: '35mm · f/1.8 · ISO 400 · Reunion'
     }
   ],
   wishes: [
