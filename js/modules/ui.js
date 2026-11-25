@@ -160,9 +160,9 @@ export function initBackupControls(store) {
   });
 
   resetBtn?.addEventListener('click', () => {
-    if (window.confirm('确定恢复到许金阳 & 渐姝君的默认初始状态吗？本地自定义的修改会被清空。')) {
+    if (window.confirm('确定清除本机缓存吗？云端同步的心跳墙、心愿、心情与时光胶囊不受影响，刷新后会自动从云端拉取。')) {
       store.reset();
-      showToast('已恢复初始状态', 'success');
+      showToast('已清除本机缓存（云端记录未受影响）', 'success');
     }
   });
 }

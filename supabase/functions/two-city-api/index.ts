@@ -267,20 +267,24 @@ Deno.serve(async (req: Request) => {
       }
 
       const { id, presetId, icon, label, note, sound } = await req.json();
+      const isCustom = String(presetId || '') === 'custom';
       const row = {
         id: String(id || `sig_${Date.now()}`),
         from_partner: partner,
         preset_id: String(presetId || 'miss'),
-        icon: String(icon || '🐾').slice(0, 8),
-        label: String(label || '突然想你').slice(0, 20),
-        note: String(note || '').slice(0, 40),
+        icon: String(icon || (isCustom ? '💬' : '🐾')).slice(0, 8),
+        label: String(label || (isCustom ? '悄悄话' : '突然想你')).slice(0, 20),
+        note: String(note || '').slice(0, 80),
         hugged_back: false,
         created_at: new Date().toISOString()
       };
       await dbFetch('love_signals', { method: 'POST', body: JSON.stringify(row) });
+      const pushTitle = isCustom
+        ? `${sender.emoji} ${sender.name}（${sender.nick}）发来一条消息`
+        : `${row.icon} ${sender.name}（${sender.nick}）发来「${row.label}」`;
       const push = await pushBarkToPartner(
         partner,
-        `${row.icon} ${sender.name}（${sender.nick}）发来「${row.label}」`,
+        pushTitle,
         row.note || '点开双城纪念册给 TA 回一个抱抱吧~',
         String(sound || 'bell')
       );

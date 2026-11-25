@@ -34,16 +34,20 @@ export function initSignalsModule(store, cloud) {
   const saveMoodBtn = document.getElementById('saveMoodBtn');
 
   // Signal Launcher & Heartbeat Wall
+  const signalComposeForm = document.getElementById('signalComposeForm');
   const signalPresetBar = document.getElementById('signalPresetBar');
   const signalNoteInput = document.getElementById('signalNoteInput');
   const signalPulseStage = document.getElementById('signalPulseStage');
   const signalWeeklyEl = document.getElementById('signalWeeklyCount');
   const signalTotalEl = document.getElementById('signalTotalCount');
   const signalWallEl = document.getElementById('signalWallList');
+  const toggleWallBtn = document.getElementById('toggleSignalWallBtn');
+  const footerAdminControls = document.getElementById('footerAdminControls');
 
   let pendingAction = null;
   let selectedMoodId = MOOD_PRESETS[0].id;
   let lastLocalPokeAt = 0;
+  let wallExpanded = false;
 
   const updateIdentityBadge = () => {
     const id = cloud.getIdentity();
@@ -58,11 +62,25 @@ export function initSignalsModule(store, cloud) {
       }
     }
 
+    if (footerAdminControls) {
+      footerAdminControls.classList.toggle('hidden', !id);
+    }
+
+    if (signalNoteInput) {
+      if (id) {
+        const meta = getPartnerMeta(id.partner);
+        const other = getPartnerMeta(id.partner === 'beijing' ? 'lyg' : 'beijing');
+        signalNoteInput.placeholder = `${meta.emoji} 以${meta.nickname}身份给${other.nickname}发一句话...`;
+      } else {
+        signalNoteInput.placeholder = '认领小狗/小猪后，直接输入想对 TA 说的话...';
+      }
+    }
+
     if (syncModeBadge) {
       if (cloud.isCloudConfigured()) {
-        syncModeBadge.textContent = cloud.online ? '☁️ 云端双向同步已连接 · Bark 推送就绪' : '☁️ 云端重连中（本地暂存）';
+        syncModeBadge.textContent = cloud.online ? '☁️ 云端同步 · Bark 就绪' : '☁️ 云端重连中';
       } else {
-        syncModeBadge.textContent = '✨ 本地体验模式（配好 Supabase 后秒切双 iPhone 云同步 + Bark 推送）';
+        syncModeBadge.textContent = '✨ 本地体验模式';
       }
     }
 
@@ -156,8 +174,8 @@ export function initSignalsModule(store, cloud) {
       signalPresetBar.dataset.rendered = '1';
       signalPresetBar.innerHTML = SIGNAL_PRESETS.map(
         (p) => `
-        <button type="button" data-send-signal="${escapeHtml(p.id)}" class="touch-target px-3.5 py-2.5 rounded-2xl border border-[var(--border-subtle)] hover:border-[var(--accent-gold)] bg-white/5 hover:bg-amber-500/10 transition flex items-center justify-center gap-1.5 text-xs font-sans text-[var(--text-primary)] active:scale-95">
-          <span class="text-base">${p.icon}</span>
+        <button type="button" data-send-signal="${escapeHtml(p.id)}" class="px-3 py-2 rounded-xl border border-[var(--border-subtle)] hover:border-[var(--accent-gold)] bg-white/5 hover:bg-amber-500/10 transition flex items-center justify-center gap-1.5 text-xs font-sans text-[var(--text-primary)] active:scale-95">
+          <span class="text-sm">${p.icon}</span>
           <span>${escapeHtml(p.label)}</span>
         </button>
       `
@@ -170,31 +188,41 @@ export function initSignalsModule(store, cloud) {
     if (signalTotalEl) signalTotalEl.textContent = `${stats.total} 次`;
 
     const myPartner = cloud.getIdentity()?.partner || null;
+    const limit = wallExpanded ? 20 : 3;
+
+    if (toggleWallBtn) {
+      if (signals.length > 3) {
+        toggleWallBtn.classList.remove('hidden');
+        toggleWallBtn.textContent = wallExpanded ? '收起 ▴' : `展开全部 (${signals.length}) ▾`;
+      } else {
+        toggleWallBtn.classList.add('hidden');
+      }
+    }
 
     if (signalWallEl) {
-      const visible = signals.slice(0, 10);
+      const visible = signals.slice(0, limit);
       signalWallEl.innerHTML = visible.length
         ? visible
             .map((s) => {
               const sender = getPartnerMeta(s.from);
               const canHugBack = !s.huggedBack && (!myPartner || myPartner !== s.from);
               return `
-                <div class="p-3.5 rounded-2xl bg-white/5 border border-[var(--border-subtle)] flex items-start justify-between gap-3">
-                  <div class="flex items-start gap-3 min-w-0">
-                    <span class="w-8 h-8 rounded-full border border-[var(--border-color)] bg-amber-500/10 flex items-center justify-center text-sm shrink-0">${sender.emoji}</span>
+                <div class="p-3 rounded-xl bg-white/5 border border-[var(--border-subtle)] flex items-start justify-between gap-2.5">
+                  <div class="flex items-start gap-2.5 min-w-0">
+                    <span class="w-7 h-7 rounded-full border border-[var(--border-color)] bg-amber-500/10 flex items-center justify-center text-xs shrink-0">${sender.emoji}</span>
                     <div class="min-w-0">
                       <div class="flex items-center flex-wrap gap-1.5 text-[11px] font-mono">
                         <span class="font-bold text-[var(--text-primary)]">${escapeHtml(sender.name)}</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] border border-[var(--border-subtle)] text-[var(--accent-gold)]">${s.icon} ${escapeHtml(s.label)}</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] border border-[var(--border-subtle)] text-[var(--accent-gold)]">${s.icon} ${escapeHtml(s.label)}</span>
                         <span class="text-[10px] text-[var(--text-muted)]">${formatShortTime(s.createdAt)}</span>
                       </div>
-                      ${s.note ? `<p class="text-xs text-[var(--text-secondary)] mt-1 leading-relaxed break-words">${escapeHtml(s.note)}</p>` : ''}
+                      ${s.note ? `<p class="text-xs text-[var(--text-secondary)] mt-0.5 leading-relaxed break-words">${escapeHtml(s.note)}</p>` : ''}
                     </div>
                   </div>
                   <div class="shrink-0">
                     ${
                       s.huggedBack
-                        ? '<span class="px-2.5 py-1 rounded-full text-[10px] font-mono text-rose-300 bg-rose-500/10 border border-rose-500/25">🫂 已回抱</span>'
+                        ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-mono text-rose-300 bg-rose-500/10 border border-rose-500/25">🫂 已回抱</span>'
                         : canHugBack
                           ? `<button type="button" data-hug-signal="${escapeHtml(s.id)}" class="px-2.5 py-1 rounded-full text-[10px] font-mono border border-[var(--border-color)] text-[var(--accent-gold)] hover:bg-amber-500/15 transition">🫂 回抱</button>`
                           : '<span class="text-[10px] font-mono text-[var(--text-muted)]">已送达</span>'
@@ -204,7 +232,7 @@ export function initSignalsModule(store, cloud) {
               `;
             })
             .join('')
-        : '<p class="text-xs text-[var(--text-muted)] text-center py-4">还没有发出双城电波，点上面按钮戳一下对方吧~</p>';
+        : '<p class="text-xs text-[var(--text-muted)] text-center py-3">还没有双城纸条，输一句话或点快捷暗号发给对方吧~</p>';
     }
   };
 
@@ -304,28 +332,23 @@ export function initSignalsModule(store, cloud) {
     }
   });
 
-  signalPresetBar?.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-send-signal]');
-    if (!btn) return;
-    const presetId = btn.getAttribute('data-send-signal');
-    const preset = SIGNAL_PRESETS.find((p) => p.id === presetId) || SIGNAL_PRESETS[0];
-
+  const dispatchSignal = (preset, customNote) => {
     requireIdentity(async (partner) => {
       if (Date.now() - lastLocalPokeAt < 4000) {
-        showToast('电波正在飞行中，稍等 4 秒再戳~');
+        showToast('电波正在飞行中，稍等 4 秒再发~');
         return;
       }
       lastLocalPokeAt = Date.now();
 
-      const customNote = (signalNoteInput?.value || '').trim().slice(0, 30);
+      const noteText = String(customNote || '').trim().slice(0, 60) || preset.defaultNote;
       const signal = {
         id: `sig_${Date.now()}`,
         from: partner,
         presetId: preset.id,
         icon: preset.icon,
         label: preset.label,
-        note: customNote || preset.defaultNote,
-        sound: preset.sound,
+        note: noteText,
+        sound: preset.sound || 'bell',
         createdAt: new Date().toISOString(),
         huggedBack: false
       };
@@ -335,21 +358,48 @@ export function initSignalsModule(store, cloud) {
         draft.signals = draft.signals.slice(0, 30);
       });
       if (signalNoteInput) signalNoteInput.value = '';
-      triggerPulseEffect(partner, preset.label);
+      triggerPulseEffect(partner, preset.id === 'custom' ? '悄悄话' : preset.label);
 
       try {
         const res = await cloud.pushSignal(signal);
         if (res.localOnly) {
-          showToast(`已发射「${preset.label}」信号（本地模式，重新认领身份即可触发云端推送）`);
+          showToast(`已发送「${preset.label}」（本地模式，重新认领身份即可云端推送）`);
         } else if (res.push?.sent) {
-          showToast(`已发射「${preset.label}」，对方 iPhone 锁屏即将响起 Bark 提醒！`, 'success');
+          showToast(`已发送给对方，对方 iPhone 锁屏即将响起 Bark 提醒！`, 'success');
         } else {
-          showToast(`信号已同步到心跳墙（对方 Bark 推送未送达：${res.push?.reason || res.push?.status || '未配置'}）`, 'error');
+          showToast(`已同步到心跳墙（对方 Bark 未送达：${res.push?.reason || res.push?.status || '未配置'}）`, 'error');
         }
       } catch (err) {
-        showToast(err?.message || '信号已写入本机，云端推送失败', 'error');
+        showToast(err?.message || '已写入本机，云端推送失败', 'error');
       }
     });
+  };
+
+  signalComposeForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = (signalNoteInput?.value || '').trim();
+    if (!text) {
+      showToast('先输入想对 TA 说的话，或者直接点下方快捷暗号~');
+      signalNoteInput?.focus();
+      return;
+    }
+    dispatchSignal(
+      { id: 'custom', icon: '💬', label: '悄悄话', defaultNote: text, sound: 'bell' },
+      text
+    );
+  });
+
+  toggleWallBtn?.addEventListener('click', () => {
+    wallExpanded = !wallExpanded;
+    render();
+  });
+
+  signalPresetBar?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-send-signal]');
+    if (!btn) return;
+    const presetId = btn.getAttribute('data-send-signal');
+    const preset = SIGNAL_PRESETS.find((p) => p.id === presetId) || SIGNAL_PRESETS[0];
+    dispatchSignal(preset, signalNoteInput?.value || '');
   });
 
   signalWallEl?.addEventListener('click', (e) => {

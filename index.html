@@ -150,6 +150,53 @@
         </p>
       </div>
 
+      <!-- COMPACT DUAL-CITY SIGNAL LAUNCHER & HEARTBEAT WALL (Directly under Weather Bar) -->
+      <div id="signalBaseCard" class="w-full max-w-2xl mx-auto mb-9 glass-card rounded-2xl p-4 sm:p-5 text-left space-y-3.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="font-serif text-sm sm:text-base font-bold text-[var(--text-primary)]">💌 双城信号台</span>
+            <span id="cloudSyncModeBadge" class="text-[10px] font-mono text-[var(--text-muted)] truncate">云端连接中...</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[10px] font-mono shrink-0">
+            <span class="px-2 py-0.5 rounded-full bg-white/5 border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+              本周 <strong id="signalWeeklyCount" class="text-[var(--accent-gold)]">0 次</strong> · 共 <strong id="signalTotalCount" class="text-[var(--text-primary)]">0 次</strong>
+            </span>
+            <button id="manualCloudSyncBtn" type="button" title="立即同步云端" class="px-2 py-0.5 rounded-full border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--accent-gold)] transition">
+              ↻
+            </button>
+          </div>
+        </div>
+
+        <!-- Free-text Message Bar with Dedicated Send Button -->
+        <form id="signalComposeForm" class="flex items-center gap-2">
+          <input type="text" id="signalNoteInput" maxlength="60" placeholder="认领小狗/小猪后，直接输入想对 TA 说的话..." class="app-input flex-grow rounded-xl px-3.5 py-2 text-xs sm:text-sm min-w-0">
+          <button id="sendCustomSignalBtn" type="submit" class="touch-target px-4 py-2 rounded-xl bg-[var(--accent-gold)] text-black font-mono text-xs font-bold hover:opacity-90 active:scale-95 transition shrink-0">
+            发送 ✈
+          </button>
+        </form>
+
+        <!-- 4 Compact Quick-Poke Pills -->
+        <div id="signalPresetBar" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <!-- Populated by signals.js -->
+        </div>
+
+        <!-- Animated Cross-City Pulse Stage -->
+        <div id="signalPulseStage"></div>
+
+        <!-- Compact Heartbeat Wall (Latest 3 by default, expandable) -->
+        <div class="space-y-2 pt-1 border-t border-[var(--border-subtle)]">
+          <div class="flex items-center justify-between text-[10px] font-mono text-[var(--text-muted)]">
+            <span>双城心跳墙 · 最新互动</span>
+            <button id="toggleSignalWallBtn" type="button" class="hidden text-[var(--accent-gold)] hover:underline transition">
+              展开全部 ▾
+            </button>
+          </div>
+          <div id="signalWallList" class="space-y-2 max-h-80 overflow-y-auto pr-0.5">
+            <!-- Populated by signals.js -->
+          </div>
+        </div>
+      </div>
+
       <!-- Geographic Coordinates & Route Banner -->
       <div class="w-full max-w-2xl mx-auto mb-9 space-y-4">
 
@@ -335,47 +382,6 @@
         <!-- Rendered by couple.js -->
       </div>
 
-      <!-- DUAL-CITY SIGNAL LAUNCHER & HEARTBEAT WALL -->
-      <div id="signalBaseCard" class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-subtle)] pb-4">
-          <div>
-            <span class="text-[10px] font-mono tracking-widest text-[var(--accent-gold)] uppercase block">// Secret Base · Dual-City Signal</span>
-            <h3 class="font-serif text-xl font-bold text-[var(--text-primary)] mt-0.5">双城信号发射器 · 戳一戳</h3>
-          </div>
-          <div class="flex items-center flex-wrap gap-2 text-[11px] font-mono">
-            <span class="px-2.5 py-1 rounded-full bg-white/5 border border-[var(--border-subtle)] text-[var(--text-secondary)]">
-              本周 <strong id="signalWeeklyCount" class="text-[var(--accent-gold)]">0 次</strong> · 累计 <strong id="signalTotalCount" class="text-[var(--text-primary)]">0 次</strong>
-            </span>
-            <button id="manualCloudSyncBtn" type="button" class="px-2.5 py-1 rounded-full border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--accent-gold)] transition">
-              ↻ 同步
-            </button>
-          </div>
-        </div>
-
-        <p id="cloudSyncModeBadge" class="text-[11px] font-mono text-[var(--text-muted)]">
-          ✨ 本地体验模式（配好 Supabase 后秒切双 iPhone 云同步 + Bark 推送）
-        </p>
-
-        <!-- Custom 20-char Note Input -->
-        <input type="text" id="signalNoteInput" maxlength="30" placeholder="可选：附上一句给 TA 的小纸条（例如：快去吃饭 / 刚下地铁想你啦）..." class="app-input w-full rounded-2xl px-4 py-2.5 text-xs sm:text-sm">
-
-        <!-- 4 Signal Preset Buttons -->
-        <div id="signalPresetBar" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          <!-- Populated by signals.js -->
-        </div>
-
-        <!-- Animated Cross-City Pulse Stage -->
-        <div id="signalPulseStage" class="min-h-[10px]"></div>
-
-        <!-- Heartbeat Wall -->
-        <div class="space-y-2.5">
-          <div class="text-[10px] font-mono tracking-wider text-[var(--text-muted)] uppercase">双城心跳墙 · 最近互戳与回抱</div>
-          <div id="signalWallList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-            <!-- Populated by signals.js -->
-          </div>
-        </div>
-      </div>
-
       <!-- Milestones Timeline -->
       <div class="pt-4 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
@@ -554,20 +560,23 @@
       小狗与小猪 · SINCE 2026.08.08 · 双城约会纪念册
     </p>
 
-    <div class="pt-2 flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-[11px] font-mono text-[var(--text-muted)]">
-      <button id="exportDataBtn" class="hover:text-[var(--accent-gold)] transition py-1">导出 JSON 备份</button>
-      <span>·</span>
-      <button id="importDataBtn" class="hover:text-[var(--accent-gold)] transition py-1">导入备份</button>
-      <span>·</span>
-      <button id="resetDataBtn" class="hover:text-rose-400 transition py-1">重置初始状态</button>
-      <input type="file" id="importInput" class="hidden" accept=".json">
-    </div>
+    <!-- Owner-only Data Management Controls (Visible only after claiming 小狗/小猪 identity) -->
+    <div id="footerAdminControls" class="hidden space-y-3 pt-2">
+      <div class="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 text-[11px] font-mono text-[var(--text-muted)]">
+        <button id="exportDataBtn" class="hover:text-[var(--accent-gold)] transition py-1">导出 JSON 备份</button>
+        <span>·</span>
+        <button id="importDataBtn" class="hover:text-[var(--accent-gold)] transition py-1">导入备份</button>
+        <span>·</span>
+        <button id="resetDataBtn" class="hover:text-rose-400 transition py-1">清除本机缓存</button>
+        <input type="file" id="importInput" class="hidden" accept=".json">
+      </div>
 
-    <div class="pt-1 flex justify-center">
-      <label class="inline-flex items-center gap-2 text-[11px] font-mono text-[var(--text-muted)] cursor-pointer select-none">
-        <input type="checkbox" id="lockOnOpenToggle" class="accent-amber-400 rounded">
-        <span>下次打开自动开启口令锁</span>
-      </label>
+      <div class="flex justify-center">
+        <label class="inline-flex items-center gap-2 text-[11px] font-mono text-[var(--text-muted)] cursor-pointer select-none">
+          <input type="checkbox" id="lockOnOpenToggle" class="accent-amber-400 rounded">
+          <span>下次打开自动开启口令锁</span>
+        </label>
+      </div>
     </div>
   </footer>
 

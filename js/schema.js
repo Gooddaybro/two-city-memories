@@ -219,7 +219,7 @@ function normalizeSignal(item, idx) {
     presetId: typeof src.presetId === 'string' && src.presetId.trim() ? src.presetId.trim() : 'miss',
     icon: typeof src.icon === 'string' && src.icon.trim() ? src.icon.trim() : '🐾',
     label: typeof src.label === 'string' && src.label.trim() ? src.label.trim() : '突然想你',
-    note: typeof src.note === 'string' ? src.note.trim().slice(0, 40) : '',
+    note: typeof src.note === 'string' ? src.note.trim().slice(0, 80) : '',
     createdAt:
       typeof src.createdAt === 'string' && src.createdAt.trim()
         ? src.createdAt.trim()
