@@ -339,12 +339,13 @@ export function initSignalsModule(store, cloud) {
 
       try {
         const res = await cloud.pushSignal(signal);
-        showToast(
-          res.localOnly
-            ? `已发射「${preset.label}」信号！（配置 Bark 后将秒推对方 iPhone）`
-            : `已发射「${preset.label}」，对方 iPhone 即将响起 Bark 提醒！`,
-          'success'
-        );
+        if (res.localOnly) {
+          showToast(`已发射「${preset.label}」信号（本地模式，重新认领身份即可触发云端推送）`);
+        } else if (res.push?.sent) {
+          showToast(`已发射「${preset.label}」，对方 iPhone 锁屏即将响起 Bark 提醒！`, 'success');
+        } else {
+          showToast(`信号已同步到心跳墙（对方 Bark 推送未送达：${res.push?.reason || res.push?.status || '未配置'}）`, 'error');
+        }
       } catch (err) {
         showToast(err?.message || '信号已写入本机，云端推送失败', 'error');
       }

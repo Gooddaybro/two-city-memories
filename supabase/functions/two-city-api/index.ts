@@ -15,10 +15,12 @@ const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const COUPLE_SECRET = Deno.env.get('COUPLE_SECRET') || '0808';
 const TOKEN_SECRET = Deno.env.get('TOKEN_SECRET') || `two-city-hmac-${COUPLE_SECRET}`;
 
-const BARK_KEYS: Record<string, string> = {
-  beijing: Deno.env.get('BARK_KEY_XJY') || '',
-  lyg: Deno.env.get('BARK_KEY_JSJ') || ''
-};
+function getBarkKeys(): Record<string, string> {
+  return {
+    beijing: (Deno.env.get('BARK_KEY_XJY') || '').trim(),
+    lyg: (Deno.env.get('BARK_KEY_JSJ') || '').trim()
+  };
+}
 
 const PARTNER_NAMES: Record<string, { name: string; nick: string; emoji: string }> = {
   beijing: { name: '许金阳', nick: '小狗', emoji: '🐶' },
@@ -103,7 +105,7 @@ async function pushBarkToPartner(
   sound = 'bell'
 ) {
   const target = sender === 'beijing' ? 'lyg' : 'beijing';
-  const deviceKey = BARK_KEYS[target];
+  const deviceKey = getBarkKeys()[target];
   if (!deviceKey) return { sent: false, reason: 'missing_bark_key' };
 
   const cleanUrl = SITE_URL.endsWith('/') ? SITE_URL : `${SITE_URL}/`;
@@ -121,7 +123,9 @@ async function pushBarkToPartner(
         url: cleanUrl
       })
     });
-    return { sent: resp.ok, status: resp.status };
+    const resJson = await resp.json().catch(() => ({}));
+    const ok = resp.ok && (resJson?.code === 200 || resJson?.code === undefined);
+    return { sent: ok, status: resp.status, reason: ok ? undefined : String(resJson?.message || 'bark_rejected') };
   } catch {
     return { sent: false, reason: 'network_error' };
   }
@@ -139,7 +143,17 @@ Deno.serve(async (req: Request) => {
 
   try {
     if (req.method === 'GET' && route === '/health') {
-      return jsonResp({ ok: true, service: 'two-city-api', barkConfigured: Boolean(BARK_KEYS.beijing || BARK_KEYS.lyg) }, 200, origin);
+      const keys = getBarkKeys();
+      return jsonResp(
+        {
+          ok: true,
+          service: 'two-city-api',
+          barkConfigured: Boolean(keys.beijing && keys.lyg),
+          bark: { beijing: Boolean(keys.beijing), lyg: Boolean(keys.lyg) }
+        },
+        200,
+        origin
+      );
     }
 
     if (req.method === 'POST' && route === '/auth/claim') {

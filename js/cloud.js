@@ -37,10 +37,15 @@ export class CloudBridge {
       const raw = window.localStorage.getItem(IDENTITY_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      if (parsed && (parsed.partner === 'beijing' || parsed.partner === 'lyg')) {
-        return parsed;
+      if (!parsed || (parsed.partner !== 'beijing' && parsed.partner !== 'lyg')) {
+        return null;
       }
-      return null;
+      // If cloud sync is now enabled, discard stale local-only identity that lacks an HMAC token
+      if (this.isCloudConfigured() && !parsed.token) {
+        window.localStorage.removeItem(IDENTITY_KEY);
+        return null;
+      }
+      return parsed;
     } catch {
       return null;
     }
