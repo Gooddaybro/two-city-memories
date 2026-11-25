@@ -96,7 +96,7 @@ export function initSignalsModule(store, cloud) {
       callback(id.partner);
       return true;
     }
-    showToast('先输入口令 0808 认领「小狗」或「小猪」身份吧~');
+    showToast('请先输入密码认领「小狗」或「小猪」身份');
     openClaimModal(callback);
     return false;
   };

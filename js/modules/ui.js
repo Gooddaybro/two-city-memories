@@ -65,7 +65,7 @@ export function initLockScreen(store) {
 
   const syncLockPrefs = (state) => {
     if (lockHint) {
-      lockHint.textContent = `输入纪念日解锁 (默认 ${state.couple.passcode})`;
+      lockHint.textContent = '请输入解锁密码';
     }
     if (autoLockCheckbox) {
       autoLockCheckbox.checked = Boolean(state.settings.lockOnOpen);

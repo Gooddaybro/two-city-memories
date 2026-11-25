@@ -40,7 +40,7 @@ export function validateClaimPasscode(partnerId, inputCode, expectedCode = '0808
   const normalized = String(inputCode ?? '').trim();
   const target = String(expectedCode ?? '0808').trim();
   if (!normalized || normalized !== target) {
-    return { ok: false, error: '口令不对哦，提示：纪念日 4 位数字' };
+    return { ok: false, error: '密码不对哦，请重新输入' };
   }
   return { ok: true, partner: partnerId };
 }

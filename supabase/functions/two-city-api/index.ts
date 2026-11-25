@@ -148,7 +148,7 @@ Deno.serve(async (req: Request) => {
         return jsonResp({ error: '无效的身份选项' }, 400, origin);
       }
       if (String(passcode ?? '').trim() !== COUPLE_SECRET) {
-        return jsonResp({ error: '口令不对哦，请确认纪念日密码' }, 401, origin);
+        return jsonResp({ error: '密码不对哦，请重试' }, 401, origin);
       }
       const token = await createToken(partner);
       return jsonResp({ ok: true, partner, token }, 200, origin);
