@@ -1,10 +1,13 @@
 import { escapeHtml, showToast } from './ui.js';
+import { getPartnerMeta } from '../utils/stage3-logic.js';
 
-export function initLettersModule(store) {
+export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt } = {}) {
   const beijingBtn = document.getElementById('tabBeijingBtn');
   const lygBtn = document.getElementById('tabLygBtn');
   const bodyContainer = document.getElementById('letterContent');
   const metaContainer = document.getElementById('letterMeta');
+  const receiptBar = document.getElementById('letterReceiptDisplay');
+  const stampBtn = document.getElementById('stampCurrentLetterBtn');
   const drawer = document.getElementById('letterDrawer');
   const authorSelect = document.getElementById('letterAuthorSelect');
   const bodyInput = document.getElementById('letterBodyInput');
@@ -44,7 +47,21 @@ export function initLettersModule(store) {
       metaContainer.textContent = letter.meta;
     }
 
-    // Keep author select labels in sync with editable partner names
+    if (receiptBar) {
+      if (letter.receipt) {
+        const byMeta = getPartnerMeta(letter.receipt.by);
+        receiptBar.innerHTML = `
+          <div class="inline-flex items-center flex-wrap gap-2 px-3 py-1.5 rounded-2xl bg-rose-500/10 border border-rose-400/25 text-xs">
+            <span class="font-mono text-rose-200">${escapeHtml(letter.receipt.icon)} ${escapeHtml(letter.receipt.label)}</span>
+            ${letter.receipt.note ? `<span class="text-[var(--text-secondary)] font-serif">“${escapeHtml(letter.receipt.note)}”</span>` : ''}
+            <span class="text-[10px] font-mono text-[var(--text-muted)]">· ${escapeHtml(byMeta.nickname)}盖章</span>
+          </div>
+        `;
+      } else {
+        receiptBar.innerHTML = '';
+      }
+    }
+
     if (authorSelect) {
       const optBj = authorSelect.querySelector('option[value="beijing"]');
       const optLyg = authorSelect.querySelector('option[value="lyg"]');
@@ -55,9 +72,18 @@ export function initLettersModule(store) {
 
   const openDrawer = () => {
     const state = store.getState();
-    if (authorSelect) authorSelect.value = activeTab;
-    if (bodyInput) bodyInput.value = state.letters[activeTab]?.text || '';
-    drawer?.classList.remove('hidden');
+    const openIt = (partner) => {
+      const defaultTab = partner || activeTab;
+      if (authorSelect) authorSelect.value = defaultTab;
+      if (bodyInput) bodyInput.value = state.letters[defaultTab]?.text || '';
+      drawer?.classList.remove('hidden');
+    };
+
+    if (cloud?.isCloudConfigured() && requireIdentity) {
+      requireIdentity((p) => openIt(p));
+    } else {
+      openIt(cloud?.getIdentity()?.partner || activeTab);
+    }
   };
 
   const closeDrawer = () => {
@@ -74,6 +100,11 @@ export function initLettersModule(store) {
     render();
   });
 
+  stampBtn?.addEventListener('click', () => {
+    const letter = store.getState().letters[activeTab];
+    onOpenReceipt?.({ type: 'letter', id: activeTab, title: letter?.title || '双城来信' });
+  });
+
   authorSelect?.addEventListener('change', (e) => {
     const nextAuthor = e.target.value === 'lyg' ? 'lyg' : 'beijing';
     if (bodyInput) bodyInput.value = store.getState().letters[nextAuthor]?.text || '';
@@ -86,7 +117,7 @@ export function initLettersModule(store) {
     if (e.target === drawer) closeDrawer();
   });
 
-  document.getElementById('saveLetterBtn')?.addEventListener('click', () => {
+  document.getElementById('saveLetterBtn')?.addEventListener('click', async () => {
     const author = authorSelect?.value === 'lyg' ? 'lyg' : 'beijing';
     const text = (bodyInput?.value || '').trim();
     if (!text) {
@@ -101,7 +132,13 @@ export function initLettersModule(store) {
 
     activeTab = author;
     closeDrawer();
-    showToast('双城来信已保存', 'success');
+
+    try {
+      const res = await cloud?.pushLetterUpdate(author, text);
+      showToast(res && !res.localOnly ? '双城来信已云端同步并提醒对方 iPhone 💌' : '双城来信已保存', 'success');
+    } catch {
+      showToast('双城来信已保存到本机', 'success');
+    }
   });
 
   document.getElementById('copyLetterBtn')?.addEventListener('click', async () => {

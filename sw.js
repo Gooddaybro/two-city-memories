@@ -1,4 +1,4 @@
-const CACHE_NAME = 'two-city-memories-v2-stage2-r2';
+const CACHE_NAME = 'two-city-memories-v2-stage3';
 
 const CORE_ASSETS = [
   './',
@@ -10,15 +10,20 @@ const CORE_ASSETS = [
   './assets/icons/icon-512.png',
   './assets/icons/apple-touch-icon.png',
   './data/defaults.js',
+  './data/cloud-config.js',
   './js/schema.js',
   './js/store.js',
+  './js/cloud.js',
   './js/app.js',
   './js/utils/stage2-logic.js',
+  './js/utils/stage3-logic.js',
   './js/modules/ui.js',
   './js/modules/counters.js',
   './js/modules/weather.js',
   './js/modules/map.js',
   './js/modules/couple.js',
+  './js/modules/signals.js',
+  './js/modules/capsules.js',
   './js/modules/tickets.js',
   './js/modules/gallery.js',
   './js/modules/wishlist.js',

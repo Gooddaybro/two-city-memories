@@ -328,7 +328,72 @@ export const DEFAULT_STATE = {
       meta: '寄件人: 渐姝君（小猪） · 连云港市 · 海风吹过时',
       text: `小狗：\n\n今天连云港的海风有点大，从课题组窗口望出去，海面是一片很深沉的蓝。整理完手头文献，又翻出了我们一起走过的那些城市的记录。\n\n虽然北京和连云港隔着七百多公里，但每天听你讲实验室的琐事、一起规划下一张高铁票，就觉得你一直都在身边。读研这几年或许会忙一点，但有许金阳一起并肩，所有的坚持都有了很温柔的意义。\n\n记得按时吃饭，别熬夜太晚。愿我们越来越好，早日结束异地，下一站见！`,
       updatedAt: '2026-11-24',
-      unlockAt: null
+      unlockAt: null,
+      receipt: null
     }
-  }
+  },
+  moods: {
+    beijing: {
+      icon: '🔬',
+      label: '实验室搬砖',
+      note: '写完这组数据就来找小猪聊天',
+      updatedAt: '2026-11-25T09:30:00+08:00'
+    },
+    lyg: {
+      icon: '🌊',
+      label: '看海吹风',
+      note: '今天连云港的天很蓝，想小狗了',
+      updatedAt: '2026-11-25T09:45:00+08:00'
+    }
+  },
+  signals: [
+    {
+      id: 'sig_init_1',
+      from: 'beijing',
+      presetId: 'miss',
+      icon: '🐾',
+      label: '突然想你',
+      note: '小狗在北京发来一道 740 公里的思念电波~',
+      createdAt: '2026-11-25T09:00:00+08:00',
+      huggedBack: true
+    },
+    {
+      id: 'sig_init_2',
+      from: 'lyg',
+      presetId: 'eat',
+      icon: '🍜',
+      label: '催你干饭',
+      note: '实验室再忙也要记得按时吃饭！',
+      createdAt: '2026-11-25T09:20:00+08:00',
+      huggedBack: false
+    }
+  ],
+  capsules: [
+    {
+      id: 'cap_init_1',
+      from: 'beijing',
+      to: 'lyg',
+      title: '给小猪的第一枚可拆封火漆信',
+      sealStyle: '🐶×🐷',
+      teaserHint: '提示：这是送给渐姝君的秘密基地欢迎信~',
+      unlockAt: '2026-11-24T00:00:00+08:00',
+      body: '小猪，当你点碎这枚火漆印的时候，我们的双城秘密基地就正式营业啦！以后不管隔着多少公里，想我了就戳一戳，有悄悄话就封进时光胶囊里，等下一次见面的日子一起拆开。',
+      createdAt: '2026-11-24T22:00:00+08:00',
+      openedAt: null,
+      receipt: null
+    },
+    {
+      id: 'cap_init_2',
+      from: 'beijing',
+      to: 'lyg',
+      title: '2026 冬日见面日 · 定时解锁胶囊',
+      sealStyle: '08·08',
+      teaserHint: '拆封前暗号：和 10 月 5 号那天在手腕画的小太阳有关 ☀️',
+      unlockAt: '2026-12-25T00:00:00+08:00',
+      body: '圣诞与冬日见面的那天终于到啦！从 2026.08.08 枣庄双子塔到现在，每一张车票都是我们走近彼此的证明。希望有一天我们不再异地，把每一个冬天都过成朝夕相伴。',
+      createdAt: '2026-11-25T10:00:00+08:00',
+      openedAt: null,
+      receipt: null
+    }
+  ]
 };

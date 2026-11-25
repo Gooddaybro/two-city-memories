@@ -21,7 +21,7 @@ function renderAvatarHtml(partner) {
   `;
 }
 
-export function initCoupleModule(store) {
+export function initCoupleModule(store, { onOpenMoodModal } = {}) {
   const partnersContainer = document.getElementById('coupleProfilesGrid');
   const milestonesContainer = document.getElementById('milestonesTimeline');
 
@@ -88,6 +88,7 @@ export function initCoupleModule(store) {
             .join('');
 
           const birthdayText = p.birthday ? escapeHtml(p.birthday) : '点击编辑补充生日';
+          const mood = state.moods?.[p.id] || { icon: '✨', label: '想你中', note: '' };
 
           return `
             <article class="glass-card rounded-3xl p-5 sm:p-7 flex flex-col justify-between space-y-5">
@@ -105,6 +106,20 @@ export function initCoupleModule(store) {
                 </div>
                 <button data-edit-partner="${escapeHtml(p.id)}" class="px-3 py-1.5 rounded-full text-[11px] font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--accent-gold)] transition shrink-0">
                   编辑
+                </button>
+              </div>
+
+              <!-- Live Mood Status Sticker -->
+              <div class="rounded-2xl px-3.5 py-2.5 bg-white/5 border border-[var(--border-subtle)] flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 text-xs font-sans font-medium text-[var(--text-primary)]">
+                    <span>${escapeHtml(mood.icon)}</span>
+                    <span>${escapeHtml(mood.label)}</span>
+                  </div>
+                  ${mood.note ? `<p class="text-[11px] text-[var(--text-secondary)] truncate mt-0.5">${escapeHtml(mood.note)}</p>` : ''}
+                </div>
+                <button type="button" data-change-mood="1" class="px-2.5 py-1 rounded-full text-[10px] font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--accent-gold)] shrink-0 transition">
+                  换心情
                 </button>
               </div>
 
@@ -159,6 +174,11 @@ export function initCoupleModule(store) {
   };
 
   partnersContainer?.addEventListener('click', (e) => {
+    const moodBtn = e.target.closest('[data-change-mood]');
+    if (moodBtn && typeof onOpenMoodModal === 'function') {
+      onOpenMoodModal();
+      return;
+    }
     const btn = e.target.closest('[data-edit-partner]');
     if (btn) openProfileModal(btn.getAttribute('data-edit-partner'));
   });

@@ -98,6 +98,11 @@
 
       <!-- Utility Actions -->
       <div class="flex items-center space-x-2 shrink-0">
+        <button id="identityBadgeBtn" title="认领身份（许金阳 / 渐姝君）" class="touch-target flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] transition bg-white/5 text-[var(--text-primary)]">
+          <span>🔑</span>
+          <span class="hidden sm:inline">认领身份</span>
+        </button>
+
         <button id="themeToggleBtn" class="touch-target flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] transition bg-white/5 text-[var(--text-primary)]">
           <span id="themeIcon">🌙</span>
           <span id="themeLabel" class="hidden sm:inline">暗夜星轨</span>
@@ -330,6 +335,47 @@
         <!-- Rendered by couple.js -->
       </div>
 
+      <!-- DUAL-CITY SIGNAL LAUNCHER & HEARTBEAT WALL -->
+      <div id="signalBaseCard" class="glass-card rounded-3xl p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--border-subtle)] pb-4">
+          <div>
+            <span class="text-[10px] font-mono tracking-widest text-[var(--accent-gold)] uppercase block">// Secret Base · Dual-City Signal</span>
+            <h3 class="font-serif text-xl font-bold text-[var(--text-primary)] mt-0.5">双城信号发射器 · 戳一戳</h3>
+          </div>
+          <div class="flex items-center flex-wrap gap-2 text-[11px] font-mono">
+            <span class="px-2.5 py-1 rounded-full bg-white/5 border border-[var(--border-subtle)] text-[var(--text-secondary)]">
+              本周 <strong id="signalWeeklyCount" class="text-[var(--accent-gold)]">0 次</strong> · 累计 <strong id="signalTotalCount" class="text-[var(--text-primary)]">0 次</strong>
+            </span>
+            <button id="manualCloudSyncBtn" type="button" class="px-2.5 py-1 rounded-full border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--accent-gold)] transition">
+              ↻ 同步
+            </button>
+          </div>
+        </div>
+
+        <p id="cloudSyncModeBadge" class="text-[11px] font-mono text-[var(--text-muted)]">
+          ✨ 本地体验模式（配好 Supabase 后秒切双 iPhone 云同步 + Bark 推送）
+        </p>
+
+        <!-- Custom 20-char Note Input -->
+        <input type="text" id="signalNoteInput" maxlength="30" placeholder="可选：附上一句给 TA 的小纸条（例如：快去吃饭 / 刚下地铁想你啦）..." class="app-input w-full rounded-2xl px-4 py-2.5 text-xs sm:text-sm">
+
+        <!-- 4 Signal Preset Buttons -->
+        <div id="signalPresetBar" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <!-- Populated by signals.js -->
+        </div>
+
+        <!-- Animated Cross-City Pulse Stage -->
+        <div id="signalPulseStage" class="min-h-[10px]"></div>
+
+        <!-- Heartbeat Wall -->
+        <div class="space-y-2.5">
+          <div class="text-[10px] font-mono tracking-wider text-[var(--text-muted)] uppercase">双城心跳墙 · 最近互戳与回抱</div>
+          <div id="signalWallList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+            <!-- Populated by signals.js -->
+          </div>
+        </div>
+      </div>
+
       <!-- Milestones Timeline -->
       <div class="pt-4 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
@@ -428,20 +474,36 @@
 
     </section>
 
-    <!-- SECTION 07: MIDNIGHT LETTERS -->
+    <!-- SECTION 07: MIDNIGHT LETTERS & WAX-SEAL TIME CAPSULES -->
     <section id="letters" class="reveal-section max-w-4xl mx-auto px-4 py-16 sm:py-20 border-t border-[var(--border-subtle)]">
 
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4">
         <div>
-          <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Midnight Correspondence</span>
-          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城来信</h2>
+          <span class="text-xs font-mono tracking-widest text-[var(--accent-gold)] uppercase block mb-1">// Midnight Correspondence & Time Capsules</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城来信 · 火漆时光胶囊</h2>
         </div>
-        <button id="openLetterDrawerBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-white/5 hover:bg-white/10 text-[var(--accent-gold)] transition self-start sm:self-auto">
-          ✍️ 写一封新回信
+        <div class="flex items-center flex-wrap gap-2">
+          <button id="openLetterDrawerBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-subtle)] bg-white/5 hover:bg-white/10 text-[var(--text-primary)] transition">
+            ✍️ 写双城长信
+          </button>
+          <button id="openCapsuleModalBtn" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-amber-500/10 hover:bg-amber-500/20 text-[var(--accent-gold)] transition">
+            🔥 封存时光胶囊
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode Switcher: Long Letters vs Wax-Seal Capsules -->
+      <div class="flex flex-wrap items-center gap-2 mb-7">
+        <button id="lettersModeLongBtn" type="button" class="px-4 py-2 rounded-full text-xs font-mono bg-[var(--accent-gold)] text-black font-bold transition">
+          ✉️ 双城长信
+        </button>
+        <button id="lettersModeCapsuleBtn" type="button" class="px-4 py-2 rounded-full text-xs font-mono bg-white/5 text-[var(--text-secondary)] hover:bg-white/10 transition">
+          🔥 火漆时光胶囊
         </button>
       </div>
 
-      <div class="glass-card rounded-3xl p-5 sm:p-10 relative overflow-hidden">
+      <!-- Long Letters Card -->
+      <div id="lettersLongView" class="glass-card rounded-3xl p-5 sm:p-10 relative overflow-hidden">
 
         <div class="flex flex-wrap border-b border-[var(--border-subtle)] pb-3 mb-7 gap-5 text-xs sm:text-sm font-serif">
           <button id="tabBeijingBtn" class="text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)] pb-2 transition font-bold">
@@ -456,13 +518,27 @@
           <!-- Rendered by letters.js -->
         </div>
 
-        <div class="mt-9 pt-5 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-[var(--text-muted)] gap-3">
+        <div id="letterReceiptDisplay" class="mt-6"></div>
+
+        <div class="mt-7 pt-5 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] font-mono text-[var(--text-muted)] gap-3">
           <span id="letterMeta">寄件人: 许金阳（小狗） · 北京市 · 实验室灯下</span>
-          <button id="copyLetterBtn" class="touch-target text-[var(--accent-gold)] hover:underline inline-flex items-center space-x-1 self-start sm:self-auto">
-            <span>📋 复制文字发给TA</span>
-          </button>
+          <div class="flex items-center flex-wrap gap-3">
+            <button id="stampCurrentLetterBtn" type="button" class="touch-target px-3 py-1 rounded-full border border-[var(--border-color)] text-[var(--accent-gold)] hover:bg-amber-500/10 transition">
+              💌 盖章回执
+            </button>
+            <button id="copyLetterBtn" type="button" class="touch-target text-[var(--accent-gold)] hover:underline inline-flex items-center space-x-1">
+              <span>📋 复制文字发给TA</span>
+            </button>
+          </div>
         </div>
 
+      </div>
+
+      <!-- Wax-Seal Time Capsules Mailbox View -->
+      <div id="lettersCapsuleView" class="hidden space-y-5">
+        <div id="capsulesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Rendered by capsules.js -->
+        </div>
       </div>
 
     </section>
@@ -758,6 +834,153 @@
       <div class="flex justify-end space-x-3 pt-2">
         <button id="cancelLetterDrawerBtn" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
         <button id="saveLetterBtn" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">更新保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLAIM IDENTITY MODAL (Passcode 0808) -->
+  <div id="claimIdentityModal" class="fixed inset-0 z-[125] hidden bg-black/82 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-sm w-full p-6 sm:p-7 rounded-3xl space-y-5" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">认领你的双城身份</h3>
+        <button id="closeClaimModalBtn" class="touch-target text-[var(--text-muted)] font-mono">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <label class="cursor-pointer">
+            <input type="radio" name="claimPartner" value="beijing" checked class="peer hidden">
+            <div class="p-3.5 rounded-2xl border border-[var(--border-subtle)] peer-checked:border-[var(--accent-gold)] peer-checked:bg-amber-500/15 text-center space-y-1 transition">
+              <div class="text-2xl">🐶</div>
+              <div class="font-serif font-bold text-sm text-[var(--text-primary)]">许金阳</div>
+              <div class="text-[10px] font-mono text-[var(--text-muted)]">北京 · 小狗</div>
+            </div>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="claimPartner" value="lyg" class="peer hidden">
+            <div class="p-3.5 rounded-2xl border border-[var(--border-subtle)] peer-checked:border-[var(--accent-gold)] peer-checked:bg-amber-500/15 text-center space-y-1 transition">
+              <div class="text-2xl">🐷</div>
+              <div class="font-serif font-bold text-sm text-[var(--text-primary)]">渐姝君</div>
+              <div class="text-[10px] font-mono text-[var(--text-muted)]">连云港 · 小猪</div>
+            </div>
+          </label>
+        </div>
+
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">输入双人互动密码（默认 0808）</label>
+          <input type="password" inputmode="numeric" id="claimPasscodeInput" maxlength="12" placeholder="0808" class="app-input w-full rounded-xl px-3 py-2.5 text-center text-lg font-mono tracking-[0.4em]">
+          <p id="claimErrorText" class="text-rose-400 text-[11px] mt-1.5 hidden"></p>
+        </div>
+
+        <p class="text-[11px] text-[var(--text-muted)] leading-relaxed">
+          验证一次后本机长期记住，随时可发戳一戳、换心情贴纸、封存时光胶囊与同步心愿。
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between pt-1">
+        <button id="claimLogoutBtn" type="button" class="hidden text-xs font-mono text-rose-400 hover:underline">退出当前身份</button>
+        <div class="flex items-center gap-2 ml-auto">
+          <button id="cancelClaimModalBtn" type="button" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+          <button id="claimSubmitBtn" type="button" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">验证认领</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOOD STICKER MODAL -->
+  <div id="moodModal" class="fixed inset-0 z-[120] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full max-h-[88vh] overflow-y-auto p-6 rounded-3xl space-y-4" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">更换今日心情贴纸</h3>
+        <button id="closeMoodModalBtn" class="touch-target text-[var(--text-muted)] font-mono">✕</button>
+      </div>
+
+      <div id="moodPresetsGrid" class="grid grid-cols-2 gap-2.5"></div>
+
+      <div class="text-xs">
+        <label class="block font-mono text-[var(--text-muted)] mb-1">此刻的一句小状态（可选）</label>
+        <input type="text" id="moodCustomNoteInput" maxlength="32" placeholder="写一句给对方看的小状态..." class="app-input w-full rounded-xl px-3 py-2">
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="cancelMoodModalBtn" type="button" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveMoodBtn" type="button" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">贴上心情</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPOSE TIME CAPSULE MODAL -->
+  <div id="capsuleModal" class="fixed inset-0 z-[120] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-lg w-full max-h-[88vh] overflow-y-auto p-6 sm:p-7 rounded-3xl space-y-4" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">封存一封火漆时光胶囊</h3>
+        <button id="closeCapsuleModalBtn" class="touch-target text-[var(--text-muted)] font-mono">✕</button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block font-mono text-[var(--text-muted)] mb-1">信封标题</label>
+            <input type="text" id="capsuleTitleInput" maxlength="40" placeholder="例: 写给下次见面那天的你" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">火漆印章</label>
+            <select id="capsuleSealSelect" class="app-input w-full rounded-xl px-3 py-2">
+              <option value="08·08">08·08 纪念日</option>
+              <option value="🐶×🐷">🐶×🐷 小狗小猪</option>
+              <option value="🚄">🚄 山海专列</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">摇一摇暗号提示（未到期可偷看的线索）</label>
+          <input type="text" id="capsuleTeaserInput" maxlength="60" placeholder="例: 提示：和我们上次在海边说的话有关~" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-mono text-[var(--text-muted)]">拆封解锁时间</label>
+            <div class="flex items-center gap-1.5 text-[10px] font-mono">
+              <button type="button" data-capsule-preset="next-meet" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[var(--accent-gold)]">下次见面</button>
+              <button type="button" data-capsule-preset="new-year" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[var(--accent-gold)]">跨年零点</button>
+              <button type="button" data-capsule-preset="now" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-[var(--text-secondary)]">立刻可拆</button>
+            </div>
+          </div>
+          <input type="datetime-local" id="capsuleUnlockInput" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">信纸正文（未到期前严格封存）</label>
+          <textarea id="capsuleBodyInput" rows="5" placeholder="写下想在未来那一天才让对方看到的话..." class="app-input w-full rounded-xl px-3 py-2.5 font-serif leading-relaxed"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button id="cancelCapsuleModalBtn" type="button" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveCapsuleBtn" type="button" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">滴落火漆封存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKER RECEIPT MODAL -->
+  <div id="receiptModal" class="fixed inset-0 z-[125] hidden bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <h3 class="font-serif text-base font-bold text-[var(--text-primary)]">盖一枚已读回执印章</h3>
+        <button id="closeReceiptModalBtn" class="touch-target text-[var(--text-muted)] font-mono">✕</button>
+      </div>
+
+      <div id="receiptStampsRow" class="flex gap-2"></div>
+
+      <div class="text-xs">
+        <label class="block font-mono text-[var(--text-muted)] mb-1">留一句悄悄话短评（可选）</label>
+        <input type="text" id="receiptNoteInput" maxlength="45" placeholder="例: 看到最后一句笑出声啦，好想抱你！" class="app-input w-full rounded-xl px-3 py-2">
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button id="cancelReceiptModalBtn" type="button" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="saveReceiptBtn" type="button" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">盖章送达</button>
       </div>
     </div>
   </div>

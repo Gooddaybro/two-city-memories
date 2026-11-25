@@ -375,3 +375,79 @@ body {
     transition: none !important;
   }
 }
+
+/* ==========================================================================
+   STAGE 3: INTERACTIVE SECRET BASE (SIGNALS, WAX-SEAL TIME CAPSULES)
+   ========================================================================== */
+
+@keyframes signalPulseIn {
+  0% { opacity: 0; transform: scale(0.95); }
+  20% { opacity: 1; transform: scale(1); }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.signal-pulse-banner {
+  animation: signalPulseIn 2.6s ease forwards;
+}
+
+/* Wax-Seal Envelope Card */
+.capsule-envelope {
+  background: linear-gradient(155deg, rgba(38, 22, 28, 0.9), rgba(16, 19, 30, 0.92));
+  border: 1px solid rgba(229, 193, 133, 0.28);
+  box-shadow: 0 22px 44px -18px var(--shadow-color);
+}
+
+[data-theme="light"] .capsule-envelope {
+  background: linear-gradient(155deg, #FFF7F4, #FFFFFF);
+  border-color: rgba(169, 68, 86, 0.25);
+}
+
+/* 3D Crimson & Gold Wax Seal */
+.wax-seal {
+  background: radial-gradient(circle at 32% 30%, #D9535F 0%, #9E2633 56%, #6B1620 100%);
+  color: #FCE9C8;
+  border: 2px solid rgba(246, 227, 188, 0.45);
+  box-shadow:
+    0 10px 22px rgba(107, 22, 32, 0.55),
+    inset 0 2px 6px rgba(255, 226, 200, 0.32),
+    inset 0 -4px 8px rgba(45, 5, 12, 0.5);
+}
+
+.wax-seal-ready {
+  box-shadow:
+    0 0 0 6px rgba(229, 193, 133, 0.16),
+    0 12px 26px rgba(180, 48, 62, 0.65),
+    inset 0 2px 8px rgba(255, 232, 200, 0.45);
+}
+
+@keyframes waxShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-5px) rotate(-1.4deg); }
+  40% { transform: translateX(5px) rotate(1.4deg); }
+  60% { transform: translateX(-3px) rotate(-0.8deg); }
+  80% { transform: translateX(3px) rotate(0.8deg); }
+}
+
+.wax-shake {
+  animation: waxShake 0.55s ease;
+}
+
+@keyframes waxCrack {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  45% { transform: scale(1.16) rotate(-8deg); opacity: 0.9; }
+  100% { transform: scale(1.55) rotate(16deg); opacity: 0; }
+}
+
+.wax-crack {
+  animation: waxCrack 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes capsuleUnfold {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.capsule-unfold {
+  animation: capsuleUnfold 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}

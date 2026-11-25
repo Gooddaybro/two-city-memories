@@ -163,6 +163,17 @@ function normalizeWish(item, idx) {
   };
 }
 
+function normalizeReceipt(input) {
+  if (!isPlainObject(input) || !input.label) return null;
+  return {
+    icon: typeof input.icon === 'string' && input.icon.trim() ? input.icon.trim() : '💓',
+    label: String(input.label).trim(),
+    note: typeof input.note === 'string' ? input.note.trim().slice(0, 60) : '',
+    by: input.by === 'lyg' ? 'lyg' : 'beijing',
+    at: typeof input.at === 'string' && input.at.trim() ? input.at.trim() : new Date().toISOString()
+  };
+}
+
 function normalizeLetter(input, fallback) {
   const src = isPlainObject(input) ? input : {};
   return {
@@ -182,7 +193,65 @@ function normalizeLetter(input, fallback) {
       typeof src.updatedAt === 'string' && src.updatedAt.trim()
         ? src.updatedAt.trim()
         : fallback.updatedAt,
-    unlockAt: typeof src.unlockAt === 'string' && src.unlockAt.trim() ? src.unlockAt.trim() : null
+    unlockAt: typeof src.unlockAt === 'string' && src.unlockAt.trim() ? src.unlockAt.trim() : null,
+    receipt: normalizeReceipt(src.receipt)
+  };
+}
+
+function normalizeMood(input, fallback) {
+  const src = isPlainObject(input) ? input : {};
+  return {
+    icon: typeof src.icon === 'string' && src.icon.trim() ? src.icon.trim() : fallback.icon,
+    label: typeof src.label === 'string' && src.label.trim() ? src.label.trim() : fallback.label,
+    note: typeof src.note === 'string' ? src.note.trim().slice(0, 40) : fallback.note,
+    updatedAt:
+      typeof src.updatedAt === 'string' && src.updatedAt.trim()
+        ? src.updatedAt.trim()
+        : fallback.updatedAt
+  };
+}
+
+function normalizeSignal(item, idx) {
+  const src = isPlainObject(item) ? item : {};
+  return {
+    id: typeof src.id === 'string' && src.id.trim() ? src.id.trim() : `sig_${idx + 1}`,
+    from: src.from === 'lyg' ? 'lyg' : 'beijing',
+    presetId: typeof src.presetId === 'string' && src.presetId.trim() ? src.presetId.trim() : 'miss',
+    icon: typeof src.icon === 'string' && src.icon.trim() ? src.icon.trim() : '🐾',
+    label: typeof src.label === 'string' && src.label.trim() ? src.label.trim() : '突然想你',
+    note: typeof src.note === 'string' ? src.note.trim().slice(0, 40) : '',
+    createdAt:
+      typeof src.createdAt === 'string' && src.createdAt.trim()
+        ? src.createdAt.trim()
+        : new Date().toISOString(),
+    huggedBack: Boolean(src.huggedBack)
+  };
+}
+
+function normalizeCapsule(item, idx) {
+  const src = isPlainObject(item) ? item : {};
+  const from = src.from === 'lyg' ? 'lyg' : 'beijing';
+  return {
+    id: typeof src.id === 'string' && src.id.trim() ? src.id.trim() : `cap_${idx + 1}`,
+    from,
+    to: src.to === 'beijing' || src.to === 'lyg' ? src.to : from === 'beijing' ? 'lyg' : 'beijing',
+    title: typeof src.title === 'string' && src.title.trim() ? src.title.trim() : '一封双城时光胶囊',
+    sealStyle: typeof src.sealStyle === 'string' && src.sealStyle.trim() ? src.sealStyle.trim() : '08·08',
+    teaserHint:
+      typeof src.teaserHint === 'string' && src.teaserHint.trim()
+        ? src.teaserHint.trim()
+        : '寄件人留了一点神秘感，到期就能揭晓~',
+    unlockAt:
+      typeof src.unlockAt === 'string' && src.unlockAt.trim()
+        ? src.unlockAt.trim()
+        : new Date().toISOString(),
+    body: typeof src.body === 'string' ? src.body : '',
+    createdAt:
+      typeof src.createdAt === 'string' && src.createdAt.trim()
+        ? src.createdAt.trim()
+        : new Date().toISOString(),
+    openedAt: typeof src.openedAt === 'string' && src.openedAt.trim() ? src.openedAt.trim() : null,
+    receipt: normalizeReceipt(src.receipt)
   };
 }
 
@@ -281,7 +350,17 @@ export function normalizeState(input) {
     letters: {
       beijing: normalizeLetter(lettersSrc.beijing, defaults.letters.beijing),
       lyg: normalizeLetter(lettersSrc.lyg, defaults.letters.lyg)
-    }
+    },
+    moods: {
+      beijing: normalizeMood(input.moods?.beijing, defaults.moods.beijing),
+      lyg: normalizeMood(input.moods?.lyg, defaults.moods.lyg)
+    },
+    signals: Array.isArray(input.signals)
+      ? input.signals.map(normalizeSignal)
+      : defaults.signals,
+    capsules: Array.isArray(input.capsules)
+      ? input.capsules.map(normalizeCapsule)
+      : defaults.capsules
   };
 }
 

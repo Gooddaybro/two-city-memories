@@ -1,4 +1,5 @@
 import { createBrowserStore } from './store.js';
+import { CloudBridge } from './cloud.js';
 import {
   initTheme,
   initLockScreen,
@@ -14,6 +15,8 @@ import { initTicketsModule } from './modules/tickets.js';
 import { initGalleryModule } from './modules/gallery.js';
 import { initWishlistModule } from './modules/wishlist.js';
 import { initLettersModule } from './modules/letters.js';
+import { initSignalsModule } from './modules/signals.js';
+import { initCapsulesModule } from './modules/capsules.js';
 import { initVinylModule } from './modules/vinyl.js';
 import { initScrollReveal } from './modules/effects.js';
 
@@ -51,6 +54,7 @@ function syncHeaderAndFooter(state) {
 
 function bootstrap() {
   const store = createBrowserStore();
+  const cloud = new CloudBridge(store);
 
   initTheme(store);
   const lockCtrl = initLockScreen(store);
@@ -62,14 +66,25 @@ function bootstrap() {
 
   const counters = initCountersModule(store);
   initWeatherModule(store);
-  const couple = initCoupleModule(store);
+  const signals = initSignalsModule(store, cloud);
+  const couple = initCoupleModule(store, {
+    onOpenMoodModal: () => signals.openMoodModal()
+  });
   const tickets = initTicketsModule(store);
   const gallery = initGalleryModule(store);
   const mapCtrl = initMapModule(store, {
     onOpenPhoto: (photo) => gallery.openLightbox(photo)
   });
-  const wishlist = initWishlistModule(store);
-  const letters = initLettersModule(store);
+  const wishlist = initWishlistModule(store, cloud, {
+    requireIdentity: signals.requireIdentity
+  });
+  const capsules = initCapsulesModule(store, cloud, {
+    requireIdentity: signals.requireIdentity
+  });
+  const letters = initLettersModule(store, cloud, {
+    requireIdentity: signals.requireIdentity,
+    onOpenReceipt: (target) => capsules.openReceiptModal(target)
+  });
 
   syncHeaderAndFooter(store.getState());
 
@@ -78,21 +93,35 @@ function bootstrap() {
     lockCtrl.syncLockPrefs(nextState);
     counters.render();
     couple.render();
+    signals.render();
     mapCtrl.render();
     tickets.render();
     gallery.render();
     wishlist.render();
     letters.render();
+    capsules.render();
   });
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     counters.closeModal();
     couple.closeModals();
+    signals.closeModals();
+    capsules.closeModals();
     tickets.closeModal();
     gallery.closeLightbox();
     letters.closeDrawer();
   });
+
+  // Auto-sync from Supabase cloud on load & when returning to the browser tab
+  if (cloud.isCloudConfigured()) {
+    cloud.syncFromCloud();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        cloud.syncFromCloud();
+      }
+    });
+  }
 
   registerServiceWorker();
 }
