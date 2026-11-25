@@ -65,6 +65,9 @@ alter table public.capsule_letters enable row level security;
 alter table public.love_signals enable row level security;
 alter table public.dual_letters enable row level security;
 
+grant usage on schema public to service_role;
+grant all on table public.couple_moods, public.wishes_sync, public.capsule_letters, public.love_signals, public.dual_letters to service_role;
+
 -- 初始化默认心情与核心置顶心愿
 insert into public.couple_moods (partner_id, icon, label, note)
 values
