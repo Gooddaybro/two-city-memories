@@ -54,7 +54,7 @@ export function initTheme(store) {
   }
 }
 
-export function initLockScreen(store) {
+export function initLockScreen(store, cloud = null) {
   const lockScreen = document.getElementById('lockScreen');
   const lockBtn = document.getElementById('lockScreenBtn');
   const passcodeInput = document.getElementById('passcodeInput');
@@ -82,17 +82,37 @@ export function initLockScreen(store) {
     }
   };
 
-  const verifyPasscode = () => {
-    const state = store.getState();
-    const expected = state.couple.passcode || '0808';
+  const verifyPasscode = async () => {
     const val = (passcodeInput?.value || '').trim();
-    if (val === expected) {
+    if (!val) {
+      if (passcodeError) {
+        passcodeError.textContent = '请输入解锁密码';
+        passcodeError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    passcodeSubmitBtn?.setAttribute('disabled', 'true');
+    try {
+      if (cloud?.verifyPasscode) {
+        await cloud.verifyPasscode(val);
+      } else {
+        const expected = String(store.getState().couple.passcode || '').trim();
+        if (!expected || val !== expected) {
+          throw new Error('密码错误，请重试');
+        }
+      }
       lockScreen?.classList.add('hidden');
       passcodeError?.classList.add('hidden');
       if (passcodeInput) passcodeInput.value = '';
       showToast('欢迎回到小狗与小猪的双城空间', 'success');
-    } else {
-      passcodeError?.classList.remove('hidden');
+    } catch (err) {
+      if (passcodeError) {
+        passcodeError.textContent = err?.message || '密码错误，请重试';
+        passcodeError.classList.remove('hidden');
+      }
+    } finally {
+      passcodeSubmitBtn?.removeAttribute('disabled');
     }
   };
 

@@ -13,17 +13,23 @@ import {
   computeSignalStats,
   buildBarkPushPayload,
   validateClaimPasscode,
+  isPrivateAccessGranted,
+  computeCloudSyncFingerprint,
+  applyCloudSyncDraft,
+  computeBirthdayCountdown,
+  evaluateDailyReminders,
   getPartnerMeta
 } from '../js/utils/stage3-logic.js';
+import { computeScaledDimensions, formatFileSize } from '../js/utils/image-compressor.js';
 
-test('default state includes Stage 3 moods, signals, and time capsules', () => {
+test('default state includes Stage 3 moods, signals, and time capsules without plaintext passcode', () => {
   const state = createDefaultState();
 
   assert.ok(state.moods?.beijing?.label);
   assert.ok(state.moods?.lyg?.label);
   assert.ok(Array.isArray(state.signals) && state.signals.length >= 2);
   assert.ok(Array.isArray(state.capsules) && state.capsules.length >= 2);
-  assert.equal(state.couple.passcode, '0808');
+  assert.equal(state.couple.passcode, '');
 });
 
 test('normalizeState preserves Stage 3 moods, signals, and capsules cleanly', () => {
@@ -56,11 +62,26 @@ test('normalizeState preserves Stage 3 moods, signals, and capsules cleanly', ()
   assert.equal(normalized.capsules[0].title, '跨年信');
 });
 
-test('validateClaimPasscode verifies 0808 passcode and partner id strictly', () => {
-  assert.equal(validateClaimPasscode('beijing', '0808', '0808').ok, true);
-  assert.equal(validateClaimPasscode('lyg', ' 0808 ', '0808').ok, true);
-  assert.equal(validateClaimPasscode('beijing', '1234', '0808').ok, false);
-  assert.equal(validateClaimPasscode('unknown', '0808', '0808').ok, false);
+test('validateClaimPasscode verifies passcode and partner id strictly without hardcoded default', () => {
+  assert.equal(validateClaimPasscode('beijing', 'secret99', 'secret99').ok, true);
+  assert.equal(validateClaimPasscode('lyg', ' secret99 ', 'secret99').ok, true);
+  assert.equal(validateClaimPasscode('beijing', 'wrong', 'secret99').ok, false);
+  assert.equal(validateClaimPasscode('unknown', 'secret99', 'secret99').ok, false);
+  assert.equal(validateClaimPasscode('beijing', '0808', '').ok, false);
+});
+
+test('isPrivateAccessGranted locks cloud private sections for guests and unlocks with valid token', () => {
+  assert.equal(isPrivateAccessGranted({ cloudConfigured: false, identity: null }), true);
+  assert.equal(isPrivateAccessGranted({ cloudConfigured: true, identity: null }), false);
+  assert.equal(isPrivateAccessGranted({ cloudConfigured: true, identity: { partner: 'beijing', token: '' } }), false);
+  assert.equal(
+    isPrivateAccessGranted({ cloudConfigured: true, identity: { partner: 'lyg', token: 'abc.sig' } }),
+    true
+  );
+  assert.equal(
+    isPrivateAccessGranted({ cloudConfigured: true, identity: { partner: 'guest', token: 'abc.sig' } }),
+    false
+  );
 });
 
 test('isCapsuleUnlocked and sanitizeCapsuleForClient hide body until unlockAt passes', () => {
@@ -138,4 +159,156 @@ test('buildBarkPushPayload builds clean Bark APNs JSON payload targeting the oth
   assert.ok(SIGNAL_PRESETS.length >= 4);
   assert.ok(SEAL_STYLES.length >= 3);
   assert.ok(RECEIPT_STAMPS.length >= 3);
+});
+
+test('computeCloudSyncFingerprint detects changes accurately and skips no-op re-renders', () => {
+  const base = createDefaultState();
+  const clone = createDefaultState();
+
+  assert.equal(computeCloudSyncFingerprint(base), computeCloudSyncFingerprint(clone));
+
+  clone.couple.partners.beijing.role = '本地自定义备注';
+  // Unrelated local-only field does not trigger cloud fingerprint mismatch
+  assert.equal(computeCloudSyncFingerprint(base), computeCloudSyncFingerprint(clone));
+
+  // nextMeet is now cloud-synced and updates the fingerprint
+  clone.nextMeet.city = '青岛';
+  assert.notEqual(computeCloudSyncFingerprint(base), computeCloudSyncFingerprint(clone));
+
+  clone.nextMeet.city = base.nextMeet.city;
+  clone.signals.unshift({ id: 'sig_new', from: 'beijing', note: '新消息', createdAt: '2026-11-26T12:00:00Z' });
+  assert.notEqual(computeCloudSyncFingerprint(base), computeCloudSyncFingerprint(clone));
+});
+
+test('applyCloudSyncDraft clears local lists when cloud returns empty arrays and syncs nextMeet', () => {
+  const draft = createDefaultState();
+  assert.ok(draft.wishes.length > 0);
+  assert.ok(draft.signals.length > 0);
+  assert.ok(draft.capsules.length > 0);
+
+  applyCloudSyncDraft(draft, {
+    nextMeet: { date: '2027-01-15', city: '南京', note: '寒假见' },
+    wishes: [],
+    signals: [],
+    capsules: [],
+    moods: { beijing: { icon: '🌙', label: '准备睡啦', note: '晚安', updatedAt: '2026-11-26T22:00:00Z' } }
+  });
+
+  assert.equal(draft.nextMeet.date, '2027-01-15');
+  assert.equal(draft.nextMeet.city, '南京');
+  assert.deepEqual(draft.wishes, []);
+  assert.deepEqual(draft.signals, []);
+  assert.deepEqual(draft.capsules, []);
+  assert.equal(draft.moods.beijing.label, '准备睡啦');
+});
+
+test('computeBirthdayCountdown handles same day, upcoming, next-year wrap, and Chinese format', () => {
+  const today = new Date(2026, 6, 31); // 2026-07-31
+  const bj = computeBirthdayCountdown('07-31', today);
+  assert.equal(bj.isToday, true);
+  assert.equal(bj.daysUntil, 0);
+  assert.equal(bj.label, '07月31日');
+
+  const lyg = computeBirthdayCountdown('4月9日', new Date(2026, 3, 6)); // 2026-04-06
+  assert.equal(lyg.isToday, false);
+  assert.equal(lyg.daysUntil, 3);
+  assert.equal(lyg.label, '04月09日');
+
+  const wrapped = computeBirthdayCountdown('04-09', new Date(2026, 10, 26)); // 2026-11-26
+  assert.equal(wrapped.isToday, false);
+  assert.ok(wrapped.daysUntil > 120 && wrapped.daysUntil < 140);
+});
+
+test('evaluateDailyReminders triggers monthly 8th, anniversary, partner birthdays (pre-3 & today), and reunion', () => {
+  // Normal day -> no reminders
+  assert.deepEqual(
+    evaluateDailyReminders({ todayStr: '2026-11-26', nextMeet: { date: '2026-12-25', city: '淄博' } }),
+    []
+  );
+
+  // Monthly 8th (4 months together)
+  const monthly = evaluateDailyReminders({ todayStr: '2026-12-08' });
+  assert.equal(monthly.length, 2);
+  assert.ok(monthly.every((r) => r.type === 'monthly_anniversary' && r.title.includes('4 个月')));
+
+  // Yearly anniversary (1 year)
+  const yearly = evaluateDailyReminders({ todayStr: '2027-08-08' });
+  assert.equal(yearly.length, 2);
+  assert.ok(yearly.every((r) => r.type === 'anniversary' && r.title.includes('1 周年')));
+
+  // 渐姝君 birthday pre-3 (04-06 -> notifies beijing) & day-of (04-09 -> notifies both)
+  const lygPre3 = evaluateDailyReminders({ todayStr: '2027-04-06' });
+  assert.equal(lygPre3.length, 1);
+  assert.equal(lygPre3[0].target, 'beijing');
+  assert.equal(lygPre3[0].type, 'birthday_pre3');
+
+  const lygDay = evaluateDailyReminders({ todayStr: '2027-04-09' });
+  assert.equal(lygDay.length, 2);
+  assert.ok(lygDay.some((r) => r.target === 'lyg' && r.type === 'birthday_today'));
+  assert.ok(lygDay.some((r) => r.target === 'beijing' && r.type === 'birthday_today_partner'));
+
+  // 许金阳 birthday pre-3 (07-28 -> notifies lyg) & day-of (07-31 -> notifies both)
+  const bjPre3 = evaluateDailyReminders({ todayStr: '2027-07-28' });
+  assert.equal(bjPre3.length, 1);
+  assert.equal(bjPre3[0].target, 'lyg');
+
+  const bjDay = evaluateDailyReminders({ todayStr: '2027-07-31' });
+  assert.equal(bjDay.length, 2);
+  assert.ok(bjDay.some((r) => r.target === 'beijing' && r.type === 'birthday_today'));
+
+  // Reunion pre-3 & day-of
+  const meetPre3 = evaluateDailyReminders({
+    todayStr: '2026-12-22',
+    nextMeet: { date: '2026-12-25', city: '淄博' }
+  });
+  assert.equal(meetPre3.length, 2);
+  assert.ok(meetPre3.every((r) => r.type === 'meet_pre3' && r.title.includes('淄博')));
+
+  const meetToday = evaluateDailyReminders({
+    todayStr: '2026-12-25',
+    nextMeet: { date: '2026-12-25', city: '淄博' }
+  });
+  assert.equal(meetToday.length, 2);
+  assert.ok(meetToday.every((r) => r.type === 'meet_today'));
+});
+
+test('image compressor dimension scaling and file size formatting work accurately', () => {
+  assert.deepEqual(computeScaledDimensions(1200, 900, 1600), { width: 1200, height: 900 });
+  assert.deepEqual(computeScaledDimensions(4000, 3000, 1600), { width: 1600, height: 1200 });
+  assert.deepEqual(computeScaledDimensions(2400, 3200, 1600), { width: 1200, height: 1600 });
+
+  assert.equal(formatFileSize(512), '512 B');
+  assert.equal(formatFileSize(220 * 1024), '220 KB');
+  assert.equal(formatFileSize(3.5 * 1024 * 1024), '3.50 MB');
+});
+
+test('computeCloudSyncFingerprint ignores rotating signed photo URLs while detecting metadata changes', () => {
+  const s1 = createDefaultState();
+  const s2 = createDefaultState();
+
+  s1.cloudPhotos = [
+    {
+      id: 'cp_1',
+      storagePath: 'beijing/cp_1.webp',
+      city: '连云港',
+      date: '2026.11.26',
+      title: '海边合影',
+      caption: '很开心',
+      uploadedBy: 'beijing',
+      path: 'https://example.supabase.co/storage/v1/object/sign/couple-photos/beijing/cp_1.webp?token=aaa'
+    }
+  ];
+  s2.cloudPhotos = [
+    {
+      ...s1.cloudPhotos[0],
+      path: 'https://example.supabase.co/storage/v1/object/sign/couple-photos/beijing/cp_1.webp?token=bbb'
+    }
+  ];
+
+  // Different signed URL token should NOT trigger unnecessary re-render
+  assert.equal(computeCloudSyncFingerprint(s1), computeCloudSyncFingerprint(s2));
+
+  // Metadata change or added photo SHOULD trigger sync update
+  s2.cloudPhotos[0].title = '海边橘子海';
+  assert.notEqual(computeCloudSyncFingerprint(s1), computeCloudSyncFingerprint(s2));
 });

@@ -11,22 +11,24 @@ import {
   getUnlockedCities
 } from '../js/schema.js';
 
-test('createDefaultState contains accurate couple info, 2026-08-08 start date, 0808 passcode, and pinned core wish', () => {
+test('createDefaultState contains accurate couple info, 2026-08-08 start date, no hardcoded passcode, and pinned core wish', () => {
   const state = createDefaultState();
 
   assert.equal(state.schemaVersion, SCHEMA_VERSION);
   assert.equal(state.schemaVersion, 2);
   assert.equal(state.couple.startDate, '2026-08-08T00:00:00');
-  assert.equal(state.couple.passcode, '0808');
+  assert.equal(state.couple.passcode, '');
   assert.equal(state.settings.lockOnOpen, false);
 
   assert.equal(state.couple.partners.beijing.name, '许金阳');
   assert.equal(state.couple.partners.beijing.nickname, '小狗');
   assert.equal(state.couple.partners.beijing.city, '北京');
+  assert.equal(state.couple.partners.beijing.birthday, '07-31');
 
   assert.equal(state.couple.partners.lyg.name, '渐姝君');
   assert.equal(state.couple.partners.lyg.nickname, '小猪');
   assert.equal(state.couple.partners.lyg.city, '连云港');
+  assert.equal(state.couple.partners.lyg.birthday, '04-09');
 
   assert.equal(state.wishes[0].text, CORE_WISH_TEXT);
   assert.equal(state.wishes[0].pinned, true);

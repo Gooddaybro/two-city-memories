@@ -1,13 +1,14 @@
 import { escapeHtml, showToast } from './ui.js';
 import { getPartnerMeta } from '../utils/stage3-logic.js';
 
-export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt } = {}) {
+export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt, onOpenClaimModal } = {}) {
   const beijingBtn = document.getElementById('tabBeijingBtn');
   const lygBtn = document.getElementById('tabLygBtn');
   const bodyContainer = document.getElementById('letterContent');
   const metaContainer = document.getElementById('letterMeta');
   const receiptBar = document.getElementById('letterReceiptDisplay');
   const stampBtn = document.getElementById('stampCurrentLetterBtn');
+  const copyBtn = document.getElementById('copyLetterBtn');
   const drawer = document.getElementById('letterDrawer');
   const authorSelect = document.getElementById('letterAuthorSelect');
   const bodyInput = document.getElementById('letterBodyInput');
@@ -19,6 +20,7 @@ export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt
     const bjPartner = state.couple.partners.beijing;
     const lygPartner = state.couple.partners.lyg;
     const letter = state.letters[activeTab] || state.letters.beijing;
+    const privateUnlocked = !cloud || cloud.isPrivateUnlocked();
 
     if (beijingBtn) {
       beijingBtn.textContent = `${bjPartner.name} · 来自${bjPartner.city}（${bjPartner.nickname}）`;
@@ -35,6 +37,31 @@ export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt
           ? 'text-[var(--accent-gold)] border-b-2 border-[var(--accent-gold)] pb-2 transition font-bold'
           : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] pb-2 transition';
     }
+
+    if (!privateUnlocked) {
+      if (bodyContainer) {
+        bodyContainer.innerHTML = `
+          <div class="py-10 text-center space-y-3">
+            <div class="text-3xl">💌</div>
+            <p class="font-serif text-base font-bold text-[var(--text-primary)]">双城长信已私密封存</p>
+            <p class="text-xs text-[var(--text-muted)] max-w-sm mx-auto leading-relaxed">
+              这些深夜写给彼此的话仅对许金阳（小狗）与渐姝君（小猪）开放阅览与回信。
+            </p>
+            <button type="button" data-unlock-private="1" class="mt-2 px-5 py-2 rounded-full text-xs font-mono bg-[var(--accent-gold)] text-black font-bold hover:opacity-90 transition">
+              🔑 输入口令认领身份解锁
+            </button>
+          </div>
+        `;
+      }
+      if (metaContainer) metaContainer.textContent = '私密信箱 · 需身份口令解锁';
+      if (receiptBar) receiptBar.innerHTML = '';
+      stampBtn?.classList.add('hidden');
+      copyBtn?.classList.add('hidden');
+      return;
+    }
+
+    stampBtn?.classList.remove('hidden');
+    copyBtn?.classList.remove('hidden');
 
     if (bodyContainer) {
       bodyContainer.innerHTML = String(letter.text || '')
@@ -73,8 +100,12 @@ export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt
   const openDrawer = () => {
     const state = store.getState();
     const openIt = (partner) => {
+      const isCloudLocked = Boolean(cloud?.isCloudConfigured() && partner);
       const defaultTab = partner || activeTab;
-      if (authorSelect) authorSelect.value = defaultTab;
+      if (authorSelect) {
+        authorSelect.value = defaultTab;
+        authorSelect.disabled = isCloudLocked;
+      }
       if (bodyInput) bodyInput.value = state.letters[defaultTab]?.text || '';
       drawer?.classList.remove('hidden');
     };
@@ -89,6 +120,12 @@ export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt
   const closeDrawer = () => {
     drawer?.classList.add('hidden');
   };
+
+  bodyContainer?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-unlock-private]')) {
+      onOpenClaimModal?.();
+    }
+  });
 
   beijingBtn?.addEventListener('click', () => {
     activeTab = 'beijing';
@@ -118,7 +155,8 @@ export function initLettersModule(store, cloud, { requireIdentity, onOpenReceipt
   });
 
   document.getElementById('saveLetterBtn')?.addEventListener('click', async () => {
-    const author = authorSelect?.value === 'lyg' ? 'lyg' : 'beijing';
+    const cloudPartner = cloud?.isCloudConfigured() ? cloud.getIdentity()?.partner : null;
+    const author = cloudPartner || (authorSelect?.value === 'lyg' ? 'lyg' : 'beijing');
     const text = (bodyInput?.value || '').trim();
     if (!text) {
       showToast('信件内容不能为空', 'error');

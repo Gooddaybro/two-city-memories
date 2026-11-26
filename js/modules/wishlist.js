@@ -11,7 +11,7 @@ function authorBadge(author) {
   return '';
 }
 
-export function initWishlistModule(store, cloud, { requireIdentity } = {}) {
+export function initWishlistModule(store, cloud, { requireIdentity, onOpenClaimModal } = {}) {
   const container = document.getElementById('wishlistContainer');
   const progressText = document.getElementById('wishProgressText');
   const progressBar = document.getElementById('wishProgressBar');
@@ -19,6 +19,25 @@ export function initWishlistModule(store, cloud, { requireIdentity } = {}) {
   const input = document.getElementById('newWishInput');
 
   const render = () => {
+    const privateUnlocked = !cloud || cloud.isPrivateUnlocked();
+    if (!privateUnlocked) {
+      if (progressText) progressText.textContent = '🔒 认领身份后同步查看';
+      if (progressBar) progressBar.style.width = '0%';
+      if (container) {
+        container.innerHTML = `
+          <div class="p-8 text-center space-y-3">
+            <div class="text-2xl">🔒</div>
+            <p class="font-serif text-sm text-[var(--text-primary)]">双城研途心愿清单已私密保护</p>
+            <p class="text-xs text-[var(--text-muted)]">仅许金阳（小狗）与渐姝君（小猪）认领身份后可同步查看与勾选</p>
+            <button type="button" data-unlock-private="1" class="mt-1 px-5 py-2 rounded-full text-xs font-mono bg-[var(--accent-gold)] text-black font-bold hover:opacity-90 transition">
+              🔑 输入口令认领身份解锁
+            </button>
+          </div>
+        `;
+      }
+      return;
+    }
+
     const wishes = [...(store.getState().wishes || [])].sort(
       (a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned))
     );
@@ -66,6 +85,10 @@ export function initWishlistModule(store, cloud, { requireIdentity } = {}) {
   };
 
   container?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-unlock-private]')) {
+      onOpenClaimModal?.();
+      return;
+    }
     const toggleBtn = e.target.closest('[data-toggle-wish]');
     if (toggleBtn) {
       const id = toggleBtn.getAttribute('data-toggle-wish');

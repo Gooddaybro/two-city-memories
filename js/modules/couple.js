@@ -1,4 +1,5 @@
 import { escapeHtml, showToast } from './ui.js';
+import { computeBirthdayCountdown } from '../utils/stage3-logic.js';
 
 function renderAvatarHtml(partner) {
   const initial = escapeHtml((partner.name || '').slice(-1) || '★');
@@ -21,7 +22,7 @@ function renderAvatarHtml(partner) {
   `;
 }
 
-export function initCoupleModule(store, { onOpenMoodModal } = {}) {
+export function initCoupleModule(store, { cloud = null, onOpenMoodModal, onOpenClaimModal } = {}) {
   const partnersContainer = document.getElementById('coupleProfilesGrid');
   const milestonesContainer = document.getElementById('milestonesTimeline');
 
@@ -87,8 +88,45 @@ export function initCoupleModule(store, { onOpenMoodModal } = {}) {
             )
             .join('');
 
-          const birthdayText = p.birthday ? escapeHtml(p.birthday) : '点击编辑补充生日';
+          const bdayInfo = computeBirthdayCountdown(p.birthday);
+          const birthdayText = bdayInfo
+            ? bdayInfo.isToday
+              ? `<span class="text-[var(--accent-gold)] font-bold">🎉 ${escapeHtml(bdayInfo.label)} · 今天是 TA 的生日！</span>`
+              : `${escapeHtml(bdayInfo.label)} · 还有 <span class="text-[var(--accent-gold)]">${bdayInfo.daysUntil}</span> 天`
+            : p.birthday
+              ? escapeHtml(p.birthday)
+              : '点击编辑补充生日';
           const mood = state.moods?.[p.id] || { icon: '✨', label: '想你中', note: '' };
+          const privateUnlocked = !cloud || cloud.isPrivateUnlocked();
+          const moodBoxHtml = privateUnlocked
+            ? `
+              <div class="rounded-2xl px-3.5 py-2.5 bg-white/5 border border-[var(--border-subtle)] flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 text-xs font-sans font-medium text-[var(--text-primary)]">
+                    <span>${escapeHtml(mood.icon)}</span>
+                    <span>${escapeHtml(mood.label)}</span>
+                  </div>
+                  ${mood.note ? `<p class="text-[11px] text-[var(--text-secondary)] truncate mt-0.5">${escapeHtml(mood.note)}</p>` : ''}
+                </div>
+                <button type="button" data-change-mood="1" class="px-2.5 py-1 rounded-full text-[10px] font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--accent-gold)] shrink-0 transition">
+                  换心情
+                </button>
+              </div>
+            `
+            : `
+              <div class="rounded-2xl px-3.5 py-2.5 bg-white/5 border border-dashed border-[var(--border-subtle)] flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 text-xs font-sans font-medium text-[var(--text-secondary)]">
+                    <span>🔒</span>
+                    <span>今日私密心情</span>
+                  </div>
+                  <p class="text-[11px] text-[var(--text-muted)] truncate mt-0.5">认领小狗/小猪身份后同步可见</p>
+                </div>
+                <button type="button" data-unlock-private="1" class="px-2.5 py-1 rounded-full text-[10px] font-mono border border-[var(--border-color)] text-[var(--accent-gold)] hover:bg-amber-500/10 shrink-0 transition">
+                  解锁查看
+                </button>
+              </div>
+            `;
 
           return `
             <article class="glass-card rounded-3xl p-5 sm:p-7 flex flex-col justify-between space-y-5">
@@ -110,18 +148,7 @@ export function initCoupleModule(store, { onOpenMoodModal } = {}) {
               </div>
 
               <!-- Live Mood Status Sticker -->
-              <div class="rounded-2xl px-3.5 py-2.5 bg-white/5 border border-[var(--border-subtle)] flex items-center justify-between gap-3">
-                <div class="min-w-0">
-                  <div class="flex items-center gap-1.5 text-xs font-sans font-medium text-[var(--text-primary)]">
-                    <span>${escapeHtml(mood.icon)}</span>
-                    <span>${escapeHtml(mood.label)}</span>
-                  </div>
-                  ${mood.note ? `<p class="text-[11px] text-[var(--text-secondary)] truncate mt-0.5">${escapeHtml(mood.note)}</p>` : ''}
-                </div>
-                <button type="button" data-change-mood="1" class="px-2.5 py-1 rounded-full text-[10px] font-mono border border-[var(--border-subtle)] hover:border-[var(--border-color)] text-[var(--accent-gold)] shrink-0 transition">
-                  换心情
-                </button>
-              </div>
+              ${moodBoxHtml}
 
               <div class="flex flex-wrap gap-2">${tagsHtml}</div>
 
@@ -174,6 +201,10 @@ export function initCoupleModule(store, { onOpenMoodModal } = {}) {
   };
 
   partnersContainer?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-unlock-private]')) {
+      onOpenClaimModal?.();
+      return;
+    }
     const moodBtn = e.target.closest('[data-change-mood]');
     if (moodBtn && typeof onOpenMoodModal === 'function') {
       onOpenMoodModal();

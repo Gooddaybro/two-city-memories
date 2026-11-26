@@ -1,4 +1,4 @@
-const CACHE_NAME = 'two-city-memories-v2-stage3-cloud-r3';
+const CACHE_NAME = 'two-city-memories-v3-stage4-p4';
 
 const CORE_ASSETS = [
   './',
@@ -17,6 +17,7 @@ const CORE_ASSETS = [
   './js/app.js',
   './js/utils/stage2-logic.js',
   './js/utils/stage3-logic.js',
+  './js/utils/image-compressor.js',
   './js/modules/ui.js',
   './js/modules/counters.js',
   './js/modules/weather.js',
@@ -63,8 +64,13 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  const isCodeOrDoc =
+    request.mode === 'navigate' ||
+    /\.(html|js|css|json)$/i.test(url.pathname) ||
+    url.pathname.endsWith('/');
+
   event.respondWith(
-    fetch(request)
+    fetch(request, isCodeOrDoc ? { cache: 'no-cache' } : undefined)
       .then((response) => {
         if (response && response.ok) {
           const clone = response.clone();

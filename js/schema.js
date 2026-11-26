@@ -67,7 +67,10 @@ function normalizePartner(input, fallback) {
     city: typeof src.city === 'string' && src.city.trim() ? src.city.trim() : fallback.city,
     coords,
     role: typeof src.role === 'string' && src.role.trim() ? src.role.trim() : fallback.role,
-    birthday: typeof src.birthday === 'string' ? src.birthday.trim() : fallback.birthday,
+    birthday:
+      typeof src.birthday === 'string' && src.birthday.trim()
+        ? src.birthday.trim()
+        : fallback.birthday,
     avatar: typeof src.avatar === 'string' && src.avatar.trim() ? src.avatar.trim() : fallback.avatar,
     tags: normalizeStringArray(src.tags, fallback.tags),
     motto: typeof src.motto === 'string' && src.motto.trim() ? src.motto.trim() : fallback.motto
@@ -134,6 +137,10 @@ function normalizePhoto(item, idx) {
     date: typeof src.date === 'string' && src.date.trim() ? src.date.trim() : '',
     title,
     path: typeof src.path === 'string' ? src.path.trim() : '',
+    storagePath: typeof src.storagePath === 'string' ? src.storagePath.trim() : '',
+    uploadedBy: src.uploadedBy === 'lyg' ? 'lyg' : src.uploadedBy === 'beijing' ? 'beijing' : '',
+    createdAt: typeof src.createdAt === 'string' ? src.createdAt.trim() : '',
+    isCloud: Boolean(src.isCloud),
     caption: typeof src.caption === 'string' && src.caption.trim() ? src.caption.trim() : title,
     tags: normalizeStringArray(src.tags, [city]),
     gradient:
@@ -360,7 +367,12 @@ export function normalizeState(input) {
       : defaults.signals,
     capsules: Array.isArray(input.capsules)
       ? input.capsules.map(normalizeCapsule)
-      : defaults.capsules
+      : defaults.capsules,
+    cloudPhotos: Array.isArray(input.cloudPhotos)
+      ? input.cloudPhotos
+          .map((item, idx) => normalizePhoto({ ...item, isCloud: true }, idx))
+          .filter((p) => Boolean(p.path))
+      : []
   };
 }
 

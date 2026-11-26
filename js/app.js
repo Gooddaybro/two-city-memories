@@ -5,7 +5,8 @@ import {
   initLockScreen,
   initBackupControls,
   initStarfieldCanvas,
-  initMobileBottomNav
+  initMobileBottomNav,
+  showToast
 } from './modules/ui.js';
 import { initCountersModule } from './modules/counters.js';
 import { initWeatherModule } from './modules/weather.js';
@@ -57,36 +58,69 @@ function bootstrap() {
   const cloud = new CloudBridge(store);
 
   initTheme(store);
-  const lockCtrl = initLockScreen(store);
+  const lockCtrl = initLockScreen(store, cloud);
   initBackupControls(store);
   initStarfieldCanvas();
   initMobileBottomNav();
   initScrollReveal();
   initVinylModule();
 
-  const counters = initCountersModule(store);
-  initWeatherModule(store);
   const signals = initSignalsModule(store, cloud);
+  const counters = initCountersModule(store, cloud, {
+    requireIdentity: signals.requireIdentity
+  });
+  initWeatherModule(store);
+  const openClaim = () => signals.openClaimModal(null);
   const couple = initCoupleModule(store, {
-    onOpenMoodModal: () => signals.openMoodModal()
+    cloud,
+    onOpenMoodModal: () => signals.openMoodModal(),
+    onOpenClaimModal: openClaim
   });
   const tickets = initTicketsModule(store);
-  const gallery = initGalleryModule(store);
+  const gallery = initGalleryModule(store, cloud, {
+    requireIdentity: signals.requireIdentity,
+    onOpenClaimModal: openClaim
+  });
   const mapCtrl = initMapModule(store, {
+    cloud,
+    requireIdentity: signals.requireIdentity,
     onOpenPhoto: (photo) => gallery.openLightbox(photo)
   });
   const wishlist = initWishlistModule(store, cloud, {
-    requireIdentity: signals.requireIdentity
+    requireIdentity: signals.requireIdentity,
+    onOpenClaimModal: openClaim
   });
   const capsules = initCapsulesModule(store, cloud, {
-    requireIdentity: signals.requireIdentity
+    requireIdentity: signals.requireIdentity,
+    onOpenClaimModal: openClaim
   });
   const letters = initLettersModule(store, cloud, {
     requireIdentity: signals.requireIdentity,
-    onOpenReceipt: (target) => capsules.openReceiptModal(target)
+    onOpenReceipt: (target) => capsules.openReceiptModal(target),
+    onOpenClaimModal: openClaim
   });
 
   syncHeaderAndFooter(store.getState());
+
+  let lastPrivateUnlocked = cloud.isPrivateUnlocked();
+  let lastAuthExpired = false;
+  cloud.onStatusChange((status) => {
+    const unlockedChanged = status.privateUnlocked !== lastPrivateUnlocked;
+    lastPrivateUnlocked = status.privateUnlocked;
+    if (unlockedChanged) {
+      couple.render();
+      signals.render();
+      wishlist.render();
+      letters.render();
+      capsules.render();
+      gallery.render();
+      mapCtrl.render();
+    }
+    if (status.authExpired && !lastAuthExpired) {
+      showToast('身份凭证已过期或口令已更新，请重新认领身份', 'error');
+    }
+    lastAuthExpired = Boolean(status.authExpired);
+  });
 
   store.subscribe((nextState) => {
     syncHeaderAndFooter(nextState);
@@ -110,17 +144,13 @@ function bootstrap() {
     capsules.closeModals();
     tickets.closeModal();
     gallery.closeLightbox();
+    gallery.closeUploadModal();
     letters.closeDrawer();
   });
 
-  // Auto-sync from Supabase cloud on load & when returning to the browser tab
+  // Auto-sync from Supabase cloud on load, on tab return, and silently every 45s while visible
   if (cloud.isCloudConfigured()) {
-    cloud.syncFromCloud();
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        cloud.syncFromCloud();
-      }
-    });
+    cloud.startAutoSync(45_000);
   }
 
   registerServiceWorker();

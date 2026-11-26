@@ -16,7 +16,7 @@ export const DEFAULT_STATE = {
   updatedAt: '2026-11-24T00:00:00.000Z',
   couple: {
     startDate: '2026-08-08T00:00:00',
-    passcode: '0808',
+    passcode: '',
     partners: {
       beijing: {
         id: 'beijing',
@@ -25,7 +25,7 @@ export const DEFAULT_STATE = {
         city: '北京',
         coords: [116.4074, 39.9042],
         role: '在读研究生 · 实验室',
-        birthday: '',
+        birthday: '07-31',
         avatar: './images/avatar-xjy.webp',
         tags: ['北京', '实验室', '小狗'],
         motto: '从北京出发的每一班高铁，终点都是你。'
@@ -37,7 +37,7 @@ export const DEFAULT_STATE = {
         city: '连云港',
         coords: [119.2216, 34.5967],
         role: '在读研究生 · 课题组',
-        birthday: '',
+        birthday: '04-09',
         avatar: './images/avatar-jsj.webp',
         tags: ['连云港', '海风', '小猪'],
         motto: '吹过连云港的海风，也想和你一起看尽四季。'
@@ -395,5 +395,6 @@ export const DEFAULT_STATE = {
       openedAt: null,
       receipt: null
     }
-  ]
+  ],
+  cloudPhotos: []
 };

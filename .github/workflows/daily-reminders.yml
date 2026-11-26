@@ -1,0 +1,61 @@
+name: Daily Anniversary & Countdown Bark Reminders
+
+on:
+  schedule:
+    # 01:00 UTC = 09:00 Asia/Shanghai (北京时间每天早上 9 点)
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+    inputs:
+      test_date:
+        description: '可选：模拟测试日期 (YYYY-MM-DD，留空则按北京时间今天)'
+        required: false
+        default: ''
+      dry_run:
+        description: '试运行模式（仅打印待推送文案，不真正发 Bark）'
+        type: boolean
+        default: true
+
+jobs:
+  trigger-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Supabase two-city-api /cron/reminders
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          TEST_DATE: ${{ inputs.test_date }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::缺少 CRON_SECRET：请在 GitHub Secrets 和 Supabase Secrets 中配置相同的 CRON_SECRET"
+            exit 1
+          fi
+
+          REF="${SUPABASE_PROJECT_REF:-uumegiamqvikmvbmmujd}"
+          URL="https://${REF}.supabase.co/functions/v1/two-city-api/cron/reminders"
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${DRY_RUN}" = "true" ]; then
+            DRY_JSON="true"
+          else
+            DRY_JSON="false"
+          fi
+
+          if [ -n "$TEST_DATE" ]; then
+            PAYLOAD="{\"date\":\"${TEST_DATE}\",\"dryRun\":${DRY_JSON}}"
+          else
+            PAYLOAD="{\"dryRun\":${DRY_JSON}}"
+          fi
+
+          echo "Calling $URL with payload: $PAYLOAD"
+          RESP=$(curl -sS -w "\n%{http_code}" -X POST "$URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Cron-Secret: ${CRON_SECRET}" \
+            -d "$PAYLOAD")
+
+          HTTP_CODE=$(echo "$RESP" | tail -n1)
+          BODY=$(echo "$RESP" | sed '$d')
+          echo "HTTP $HTTP_CODE: $BODY"
+
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            exit 1
+          fi

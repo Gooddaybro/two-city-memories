@@ -143,6 +143,18 @@ export class MemoryStore {
     return this.state;
   }
 
+  clearPrivateCache() {
+    const defaults = createDefaultState();
+    return this.update((draft) => {
+      draft.moods = defaults.moods;
+      draft.signals = [];
+      draft.capsules = [];
+      draft.cloudPhotos = [];
+      draft.wishes = defaults.wishes.slice(0, 1);
+      draft.letters = defaults.letters;
+    });
+  }
+
   getTheme() {
     return safeGet(this.storage, THEME_KEY) === 'light' ? 'light' : 'dark';
   }

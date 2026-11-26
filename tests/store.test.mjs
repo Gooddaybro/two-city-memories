@@ -113,3 +113,24 @@ test('MemoryStore reset restores defaults and clears custom mutations', () => {
   assert.equal(store.getState().nextMeet.city, '淄博 / 待定');
   assert.equal(store.getState().settings.lockOnOpen, false);
 });
+
+test('MemoryStore clearPrivateCache wipes private cloud whispers while keeping public tickets and nextMeet', () => {
+  const storage = createFakeStorage();
+  const store = new MemoryStore(storage);
+
+  store.update((draft) => {
+    draft.nextMeet.city = '连云港';
+    draft.signals = [{ id: 'sig_secret', from: 'beijing', note: '私密悄悄话', createdAt: '2026-11-26T10:00:00Z' }];
+    draft.capsules = [{ id: 'cap_secret', from: 'beijing', to: 'lyg', title: '私密信', body: '正文' }];
+    draft.cloudPhotos = [{ id: 'cp_1', city: '连云港', title: '私密合影', path: 'https://signed.example/1.webp', isCloud: true }];
+    draft.wishes.push({ id: 'w_secret', text: '私密心愿', done: false });
+  });
+
+  store.clearPrivateCache();
+  const next = store.getState();
+  assert.equal(next.nextMeet.city, '连云港');
+  assert.equal(next.signals.length, 0);
+  assert.equal(next.capsules.length, 0);
+  assert.equal(next.cloudPhotos.length, 0);
+  assert.equal(next.wishes.some((w) => w.id === 'w_secret'), false);
+});

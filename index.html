@@ -69,7 +69,7 @@
         <h3 class="font-serif text-2xl tracking-widest text-amber-200/95">小狗 & 小猪的私密空间</h3>
         <p id="lockPasscodeHint" class="text-xs text-neutral-400 font-mono tracking-wider mt-2">请输入解锁密码</p>
       </div>
-      <input type="password" inputmode="numeric" id="passcodeInput" maxlength="8" placeholder="••••" class="w-full text-center text-3xl font-mono tracking-[0.5em] bg-neutral-900 border border-amber-500/30 rounded-xl py-3 text-amber-300 focus:outline-none focus:border-amber-400 transition">
+      <input type="password" inputmode="text" autocomplete="current-password" id="passcodeInput" maxlength="32" placeholder="输入解锁口令" class="w-full text-center text-xl font-mono tracking-[0.25em] bg-neutral-900 border border-amber-500/30 rounded-xl py-3 text-amber-300 focus:outline-none focus:border-amber-400 transition">
       <button id="passcodeSubmitBtn" class="w-full py-3.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 font-mono text-sm tracking-widest border border-amber-500/40 transition">进入纪念册</button>
       <p id="passcodeError" class="text-xs text-rose-400 hidden">密码错误，请重试</p>
     </div>
@@ -123,6 +123,15 @@
 
       <!-- Radial ambient backglow (synced to time-of-day sky mood) -->
       <div id="heroAmbientGlow" class="absolute w-[320px] h-[320px] sm:w-[540px] sm:h-[540px] rounded-full blur-[110px] pointer-events-none opacity-80 -z-10 transition-all duration-700" style="background: radial-gradient(circle, rgba(229, 193, 133, 0.24) 0%, transparent 72%);"></div>
+
+      <!-- SPECIAL DAY CELEBRATION BANNER (Auto-shown on Birthdays / 8th Monthly Anniversary / Reunion Day) -->
+      <div id="specialDayBanner" class="hidden w-full max-w-2xl mx-auto mb-5 rounded-2xl px-4 py-3 border border-[var(--accent-gold)] bg-amber-500/15 text-left flex items-center gap-3 shadow-lg">
+        <span id="specialDayIcon" class="text-xl shrink-0">🎉</span>
+        <div class="min-w-0">
+          <div id="specialDayTitle" class="font-serif text-sm font-bold text-[var(--accent-gold)]"></div>
+          <p id="specialDayBody" class="text-xs text-[var(--text-primary)] mt-0.5 leading-relaxed"></p>
+        </div>
+      </div>
 
       <!-- DUAL-CITY LIVE WEATHER & SKY STATUS BAR -->
       <div class="w-full max-w-2xl mx-auto mb-7 glass-card rounded-2xl px-4 py-3 text-left space-y-2">
@@ -432,8 +441,13 @@
           <h2 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">双城胶片影集</h2>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2" id="galleryFilterTabs">
-          <!-- Populated by gallery.js -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="flex flex-wrap items-center gap-2" id="galleryFilterTabs">
+            <!-- Populated by gallery.js -->
+          </div>
+          <button id="openUploadPhotoBtn" type="button" class="touch-target px-4 py-2 rounded-full text-xs font-mono border border-[var(--border-color)] bg-amber-500/10 hover:bg-amber-500/20 text-[var(--accent-gold)] transition">
+            📸 上传新合影
+          </button>
         </div>
       </div>
 
@@ -441,11 +455,8 @@
         <!-- Populated by gallery.js -->
       </div>
 
-      <div class="mt-8 text-center">
-        <button id="triggerLocalPhotoBtn" class="touch-target inline-flex items-center text-xs font-mono text-[var(--text-muted)] hover:text-[var(--accent-gold)] border-b border-dashed border-[var(--text-muted)] transition pb-0.5">
-          📷 点击尝试本机临时预览上传（长期展示请将照片放入 ./images/）
-        </button>
-        <input type="file" id="localPhotoInput" class="hidden" accept="image/*">
+      <div id="galleryPrivacyNotice" class="mt-8 text-center">
+        <!-- Populated by gallery.js -->
       </div>
 
     </section>
@@ -640,11 +651,16 @@
 
   <!-- LIGHTBOX MODAL -->
   <div id="lightboxModal" class="fixed inset-0 z-[120] hidden bg-black/92 backdrop-blur-xl flex items-center justify-center p-4">
-    <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
-      <img id="lightboxImg" src="" alt="Photo" class="max-h-[72vh] w-auto object-contain rounded-lg shadow-2xl">
-      <div id="lightboxCaption" class="mt-4 font-serif text-sm text-neutral-200 text-center"></div>
+    <div id="lightboxStage" class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+      <div class="relative w-full flex items-center justify-center">
+        <button id="lightboxPrevBtn" type="button" aria-label="上一张" class="touch-target absolute left-0 sm:left-2 z-10 w-10 h-10 rounded-full bg-black/55 border border-white/15 text-white/85 hover:text-[var(--accent-gold)] hover:border-[var(--accent-gold)] flex items-center justify-center text-xl transition">‹</button>
+        <img id="lightboxImg" src="" alt="Photo" class="max-h-[72vh] max-w-full w-auto object-contain rounded-lg shadow-2xl select-none">
+        <button id="lightboxNextBtn" type="button" aria-label="下一张" class="touch-target absolute right-0 sm:right-2 z-10 w-10 h-10 rounded-full bg-black/55 border border-white/15 text-white/85 hover:text-[var(--accent-gold)] hover:border-[var(--accent-gold)] flex items-center justify-center text-xl transition">›</button>
+      </div>
+      <div id="lightboxCaption" class="mt-4 font-serif text-sm text-neutral-200 text-center px-4"></div>
       <div id="lightboxMeta" class="mt-1 font-mono text-[11px] text-neutral-400 text-center"></div>
-      <button id="closeLightboxBtn" class="touch-target absolute -top-11 right-0 text-white/80 hover:text-white font-mono text-sm px-2">✕ 关闭</button>
+      <div id="lightboxCounter" class="mt-1 font-mono text-[10px] text-neutral-500"></div>
+      <button id="closeLightboxBtn" type="button" class="touch-target absolute -top-11 right-0 text-white/80 hover:text-white font-mono text-sm px-2">✕ 关闭</button>
     </div>
   </div>
 
@@ -877,7 +893,7 @@
 
         <div>
           <label class="block font-mono text-[var(--text-muted)] mb-1">输入双人互动密码</label>
-          <input type="password" inputmode="numeric" id="claimPasscodeInput" maxlength="12" placeholder="••••" class="app-input w-full rounded-xl px-3 py-2.5 text-center text-lg font-mono tracking-[0.4em]">
+          <input type="password" inputmode="text" autocomplete="current-password" id="claimPasscodeInput" maxlength="32" placeholder="输入双人互动口令" class="app-input w-full rounded-xl px-3 py-2.5 text-center text-base font-mono tracking-[0.2em]">
           <p id="claimErrorText" class="text-rose-400 text-[11px] mt-1.5 hidden"></p>
         </div>
 
@@ -990,6 +1006,72 @@
       <div class="flex justify-end gap-2 pt-2">
         <button id="cancelReceiptModalBtn" type="button" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
         <button id="saveReceiptBtn" type="button" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold">盖章送达</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPLOAD CLOUD PHOTO MODAL (WebP Compression + EXIF Strip + Private Storage) -->
+  <div id="uploadPhotoModal" class="fixed inset-0 z-[125] hidden bg-black/82 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full max-h-[90vh] overflow-y-auto p-6 sm:p-7 rounded-3xl space-y-4" style="background: var(--modal-bg);">
+      <div class="flex justify-between items-center border-b border-[var(--border-subtle)] pb-3">
+        <div>
+          <h3 class="font-serif text-lg font-bold text-[var(--text-primary)]">📸 上传双城新合影</h3>
+          <p class="text-[10px] font-mono text-[var(--text-muted)] mt-0.5">自动压缩为 WebP · 清除 EXIF 定位 · 私有相册加密存储</p>
+        </div>
+        <button id="closeUploadPhotoBtn" type="button" class="touch-target text-[var(--text-muted)] hover:text-[var(--text-primary)] font-mono">✕</button>
+      </div>
+
+      <div class="space-y-3.5 text-xs">
+        <div>
+          <input type="file" id="uploadPhotoFileInput" class="hidden" accept="image/*">
+          <button id="pickUploadPhotoBtn" type="button" class="w-full rounded-2xl border border-dashed border-[var(--border-color)] bg-white/5 hover:bg-amber-500/10 p-4 text-center transition space-y-2">
+            <div id="uploadPhotoEmptyPrompt" class="space-y-1">
+              <div class="text-2xl">🎞️</div>
+              <div class="font-serif text-sm text-[var(--text-primary)]">点击从手机相册选图 / 拍照</div>
+              <div class="text-[10px] font-mono text-[var(--text-muted)]">支持 JPG / PNG / WebP / HEIC</div>
+            </div>
+            <div id="uploadPhotoPreviewWrap" class="hidden space-y-2">
+              <img id="uploadPhotoPreviewImg" src="" alt="Preview" class="max-h-48 mx-auto rounded-xl object-contain shadow-lg">
+              <div id="uploadPhotoCompressMeta" class="text-[10px] font-mono text-[var(--accent-gold)]"></div>
+            </div>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">拍摄城市（联动地图）</label>
+            <input type="text" id="uploadPhotoCity" list="uploadCitySuggestions" maxlength="16" placeholder="例: 连云港" class="app-input w-full rounded-xl px-3 py-2">
+            <datalist id="uploadCitySuggestions">
+              <option value="北京"></option>
+              <option value="连云港"></option>
+              <option value="枣庄"></option>
+              <option value="济南"></option>
+              <option value="徐州"></option>
+              <option value="淄博"></option>
+              <option value="青岛"></option>
+              <option value="南京"></option>
+            </datalist>
+          </div>
+          <div>
+            <label class="block font-mono text-[var(--text-muted)] mb-1">拍摄日期</label>
+            <input type="date" id="uploadPhotoDate" class="app-input w-full rounded-xl px-3 py-2">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">胶片标题</label>
+          <input type="text" id="uploadPhotoTitle" maxlength="36" placeholder="例: 海边橘子海日落" class="app-input w-full rounded-xl px-3 py-2">
+        </div>
+
+        <div>
+          <label class="block font-mono text-[var(--text-muted)] mb-1">一句故事配文（可选）</label>
+          <textarea id="uploadPhotoCaption" rows="2" maxlength="120" placeholder="写下这张照片背后的小故事..." class="app-input w-full rounded-xl px-3 py-2 font-serif"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button id="cancelUploadPhotoBtn" type="button" class="touch-target px-4 py-2 rounded-xl text-xs font-mono text-[var(--text-muted)]">取消</button>
+        <button id="submitUploadPhotoBtn" type="button" class="touch-target px-5 py-2 rounded-xl text-xs font-mono bg-[var(--accent-gold)] text-black font-bold disabled:opacity-50">上传到云端影集</button>
       </div>
     </div>
   </div>

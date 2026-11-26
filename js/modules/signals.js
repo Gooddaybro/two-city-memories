@@ -78,7 +78,11 @@ export function initSignalsModule(store, cloud) {
 
     if (syncModeBadge) {
       if (cloud.isCloudConfigured()) {
-        syncModeBadge.textContent = cloud.online ? '☁️ 云端同步 · Bark 就绪' : '☁️ 云端重连中';
+        if (!cloud.isPrivateUnlocked()) {
+          syncModeBadge.textContent = cloud.authExpired ? '🔒 口令已更新 · 请重新认领' : '🔒 游客预览 · 认领解锁云端';
+        } else {
+          syncModeBadge.textContent = cloud.online ? '☁️ 云端同步 · Bark 就绪' : '☁️ 云端重连中';
+        }
       } else {
         syncModeBadge.textContent = '✨ 本地体验模式';
       }
@@ -182,16 +186,17 @@ export function initSignalsModule(store, cloud) {
       ).join('');
     }
 
+    const privateUnlocked = cloud.isPrivateUnlocked();
     const signals = store.getState().signals || [];
     const stats = computeSignalStats(signals);
-    if (signalWeeklyEl) signalWeeklyEl.textContent = `${stats.weekly} 次`;
-    if (signalTotalEl) signalTotalEl.textContent = `${stats.total} 次`;
+    if (signalWeeklyEl) signalWeeklyEl.textContent = privateUnlocked ? `${stats.weekly} 次` : '-- 次';
+    if (signalTotalEl) signalTotalEl.textContent = privateUnlocked ? `${stats.total} 次` : '-- 次';
 
     const myPartner = cloud.getIdentity()?.partner || null;
     const limit = wallExpanded ? 20 : 3;
 
     if (toggleWallBtn) {
-      if (signals.length > 3) {
+      if (privateUnlocked && signals.length > 3) {
         toggleWallBtn.classList.remove('hidden');
         toggleWallBtn.textContent = wallExpanded ? '收起 ▴' : `展开全部 (${signals.length}) ▾`;
       } else {
@@ -200,6 +205,18 @@ export function initSignalsModule(store, cloud) {
     }
 
     if (signalWallEl) {
+      if (!privateUnlocked) {
+        signalWallEl.innerHTML = `
+          <div class="p-4 rounded-xl bg-white/5 border border-dashed border-[var(--border-color)] text-center space-y-2.5">
+            <p class="text-xs font-serif text-[var(--text-secondary)]">🔒 双城心跳墙与私密悄悄话仅对小狗与小猪可见</p>
+            <button type="button" data-unlock-private="1" class="px-4 py-1.5 rounded-full text-[11px] font-mono bg-[var(--accent-gold)] text-black font-bold hover:opacity-90 transition">
+              🔑 输入口令认领身份解锁
+            </button>
+          </div>
+        `;
+        return;
+      }
+
       const visible = signals.slice(0, limit);
       signalWallEl.innerHTML = visible.length
         ? visible
@@ -276,14 +293,19 @@ export function initSignalsModule(store, cloud) {
   });
 
   claimLogoutBtn?.addEventListener('click', () => {
-    cloud.logout();
+    cloud.logout({ clearPrivate: true });
     closeClaimModal();
-    showToast('已退出当前身份认领');
+    showToast('已退出当前身份并清理本机私密缓存');
   });
 
   manualSyncBtn?.addEventListener('click', async () => {
     if (!cloud.isCloudConfigured()) {
       showToast('当前为本地体验模式，按 docs/stage3-cloud-setup.md 填入云端地址即可开启双端同步');
+      return;
+    }
+    if (!cloud.isPrivateUnlocked()) {
+      showToast('请先输入口令认领身份，再拉取云端私密动态');
+      openClaimModal(null);
       return;
     }
     const ok = await cloud.syncFromCloud();
@@ -334,13 +356,14 @@ export function initSignalsModule(store, cloud) {
 
   const dispatchSignal = (preset, customNote) => {
     requireIdentity(async (partner) => {
-      if (Date.now() - lastLocalPokeAt < 4000) {
-        showToast('电波正在飞行中，稍等 4 秒再发~');
+      if (Date.now() - lastLocalPokeAt < 5000) {
+        showToast('电波正在飞行中，稍等 5 秒再发~');
         return;
       }
       lastLocalPokeAt = Date.now();
 
-      const noteText = String(customNote || '').trim().slice(0, 60) || preset.defaultNote;
+      const rawInput = String(customNote || '').trim();
+      const noteText = rawInput.slice(0, 60) || preset.defaultNote;
       const signal = {
         id: `sig_${Date.now()}`,
         from: partner,
@@ -370,7 +393,14 @@ export function initSignalsModule(store, cloud) {
           showToast(`已同步到心跳墙（对方 Bark 未送达：${res.push?.reason || res.push?.status || '未配置'}）`, 'error');
         }
       } catch (err) {
-        showToast(err?.message || '已写入本机，云端推送失败', 'error');
+        // Roll back optimistic signal so ghost messages never linger on failure (e.g. 429)
+        store.update((draft) => {
+          draft.signals = draft.signals.filter((s) => s.id !== signal.id);
+        });
+        if (signalNoteInput && rawInput) {
+          signalNoteInput.value = rawInput;
+        }
+        showToast(err?.message || '云端发送失败，请稍后重试', 'error');
       }
     });
   };
@@ -403,10 +433,19 @@ export function initSignalsModule(store, cloud) {
   });
 
   signalWallEl?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-unlock-private]')) {
+      openClaimModal(null);
+      return;
+    }
     const btn = e.target.closest('[data-hug-signal]');
     if (!btn) return;
     const id = btn.getAttribute('data-hug-signal');
     requireIdentity(async (partner) => {
+      const target = (store.getState().signals || []).find((s) => s.id === id);
+      if (target && target.from === partner) {
+        showToast('不能回抱自己发出的消息哦~');
+        return;
+      }
       store.update((draft) => {
         draft.signals = draft.signals.map((s) => (s.id === id ? { ...s, huggedBack: true } : s));
       });
@@ -414,8 +453,11 @@ export function initSignalsModule(store, cloud) {
       try {
         const res = await cloud.pushHugBack(id);
         showToast(res.localOnly ? '已回抱对方 🫂' : '已回抱并推送到对方 iPhone 🫂', 'success');
-      } catch {
-        showToast('已记录回抱 🫂', 'success');
+      } catch (err) {
+        store.update((draft) => {
+          draft.signals = draft.signals.map((s) => (s.id === id ? { ...s, huggedBack: false } : s));
+        });
+        showToast(err?.message || '回抱同步失败，请稍后重试', 'error');
       }
     });
   });

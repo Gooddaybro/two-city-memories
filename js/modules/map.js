@@ -78,7 +78,7 @@ function animateCount(el, target, suffix = '') {
   window.requestAnimationFrame(step);
 }
 
-export function initMapModule(store, { onOpenPhoto } = {}) {
+export function initMapModule(store, { cloud = null, requireIdentity = null, onOpenPhoto } = {}) {
   const svgMount = document.getElementById('routeMapSvgContainer');
   const detailCard = document.getElementById('mapCityDetailCard');
   const statsSection = document.getElementById('mileageStatsGrid');
@@ -119,25 +119,45 @@ export function initMapModule(store, { onOpenPhoto } = {}) {
   });
 
   addIdeaWishBtn?.addEventListener('click', () => {
-    const state = store.getState();
-    const exists = state.wishes.some((w) => w.text === currentIdea.title);
-    if (exists) {
-      showToast('这个约会灵感已经在心愿清单里啦');
-      return;
-    }
-    store.update((draft) => {
-      draft.wishes.push({
+    const runAdd = async (partnerId) => {
+      const state = store.getState();
+      const exists = state.wishes.some((w) => w.text === currentIdea.title);
+      if (exists) {
+        showToast('这个约会灵感已经在心愿清单里啦');
+        return;
+      }
+      const wish = {
         id: `w_${Date.now()}`,
         text: currentIdea.title,
         done: false,
         pinned: false,
-        author: 'both',
+        author: partnerId || cloud?.getIdentity()?.partner || 'both',
         createdAt: new Date().toISOString().slice(0, 10),
         doneAt: null,
         tags: [currentIdea.category]
+      };
+      store.update((draft) => {
+        draft.wishes.push(wish);
       });
-    });
-    showToast('已把这条约会灵感加入研途清单！', 'success');
+      try {
+        const res = await cloud?.pushWishAdd(wish);
+        showToast(
+          res && !res.localOnly ? '已加入研途清单并同步提醒对方 iPhone ✨' : '已把这条约会灵感加入研途清单！',
+          'success'
+        );
+      } catch (err) {
+        store.update((draft) => {
+          draft.wishes = draft.wishes.filter((w) => w.id !== wish.id);
+        });
+        showToast(err?.message || '同步心愿失败，请稍后重试', 'error');
+      }
+    };
+
+    if (cloud?.isCloudConfigured() && requireIdentity) {
+      requireIdentity((partner) => runAdd(partner));
+    } else {
+      runAdd(cloud?.getIdentity()?.partner || 'both');
+    }
   });
 
   renderDateIdea(false);
@@ -228,9 +248,18 @@ export function initMapModule(store, { onOpenPhoto } = {}) {
     }
   };
 
-  const render = () => {
+  const getMergedMapState = () => {
     const state = store.getState();
-    const stats = computeJourneyStats(state);
+    const unlocked = !cloud || cloud.isPrivateUnlocked();
+    const cloudList = unlocked && Array.isArray(state.cloudPhotos) ? state.cloudPhotos : [];
+    return {
+      ...state,
+      photos: [...cloudList, ...(state.photos || [])]
+    };
+  };
+
+  const render = () => {
+    const stats = computeJourneyStats(getMergedMapState());
 
     if (svgMount) {
       const landPath = buildLandPath();
@@ -327,7 +356,8 @@ export function initMapModule(store, { onOpenPhoto } = {}) {
     const btn = e.target.closest('[data-map-photo-id]');
     if (!btn || typeof onOpenPhoto !== 'function') return;
     const id = btn.getAttribute('data-map-photo-id');
-    const photo = (store.getState().photos || []).find((p) => p.id === id);
+    const mergedPhotos = getMergedMapState().photos || [];
+    const photo = mergedPhotos.find((p) => p.id === id);
     if (photo) onOpenPhoto(photo);
   });
 

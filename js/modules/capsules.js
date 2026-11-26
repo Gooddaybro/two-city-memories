@@ -7,7 +7,7 @@ import {
   getPartnerMeta
 } from '../utils/stage3-logic.js';
 
-export function initCapsulesModule(store, cloud, { requireIdentity } = {}) {
+export function initCapsulesModule(store, cloud, { requireIdentity, onOpenClaimModal } = {}) {
   const modeLongBtn = document.getElementById('lettersModeLongBtn');
   const modeCapsuleBtn = document.getElementById('lettersModeCapsuleBtn');
   const longView = document.getElementById('lettersLongView');
@@ -96,6 +96,28 @@ export function initCapsulesModule(store, cloud, { requireIdentity } = {}) {
   };
 
   const render = () => {
+    const privateUnlocked = !cloud || cloud.isPrivateUnlocked();
+    if (!privateUnlocked) {
+      if (modeCapsuleBtn) {
+        modeCapsuleBtn.textContent = '🔥 火漆时光胶囊 (私密)';
+      }
+      if (capsulesGrid) {
+        capsulesGrid.innerHTML = `
+          <article class="md:col-span-2 capsule-envelope rounded-3xl p-8 text-center space-y-3">
+            <div class="text-3xl">🔥</div>
+            <h4 class="font-serif text-base sm:text-lg font-bold text-[var(--text-primary)]">火漆时光胶囊已私密上锁</h4>
+            <p class="text-xs text-[var(--text-muted)] max-w-sm mx-auto leading-relaxed">
+              所有封存的定时信件与暗号仅对小狗与小猪可见，输入口令认领身份后即可查看与拆封。
+            </p>
+            <button type="button" data-unlock-private="1" class="mt-1 px-5 py-2 rounded-full text-xs font-mono bg-[var(--accent-gold)] text-black font-bold hover:opacity-90 transition">
+              🔑 输入口令认领身份解锁
+            </button>
+          </article>
+        `;
+      }
+      return;
+    }
+
     const capsules = store.getState().capsules || [];
     const now = new Date();
 
@@ -248,6 +270,10 @@ export function initCapsulesModule(store, cloud, { requireIdentity } = {}) {
   });
 
   capsulesGrid?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-unlock-private]')) {
+      onOpenClaimModal?.();
+      return;
+    }
     const waxBtn = e.target.closest('[data-wax-capsule]');
     if (waxBtn) {
       const id = waxBtn.getAttribute('data-wax-capsule');
@@ -270,17 +296,38 @@ export function initCapsulesModule(store, cloud, { requireIdentity } = {}) {
       render();
       window.setTimeout(async () => {
         crackingId = null;
+        let openedBody = capsule.body || '';
+        let openedAt = new Date().toISOString();
+
+        if (cloud?.isCloudConfigured()) {
+          try {
+            const res = await cloud.pushCapsuleOpen(id);
+            if (typeof res?.body === 'string' && res.body) {
+              openedBody = res.body;
+            }
+            if (res?.openedAt) {
+              openedAt = res.openedAt;
+            }
+          } catch (err) {
+            render();
+            showToast(err?.message || '拆封失败，请稍后重试', 'error');
+            return;
+          }
+        }
+
         store.update((draft) => {
           draft.capsules = draft.capsules.map((c) =>
-            c.id === id ? { ...c, openedAt: new Date().toISOString() } : c
+            c.id === id
+              ? { ...c, openedAt, isLocked: false, body: openedBody || c.body }
+              : c
           );
         });
-        showToast('火漆已开启，慢慢读这封写给你的信 💌', 'success');
-        try {
-          await cloud.pushCapsuleOpen(id);
-        } catch {
-          // Local state already updated
+
+        // Fallback refresh if body was still empty after opening
+        if (!openedBody && cloud?.isCloudConfigured()) {
+          await cloud.syncFromCloud();
         }
+        showToast('火漆已开启，慢慢读这封写给你的信 💌', 'success');
       }, 480);
       return;
     }
